@@ -6,13 +6,13 @@
 //   1. Run setupStella() once to initialize the DB sheet
 //   2. Set Script Properties:
 //        LITELLM_API_KEY   → your Bearer token
-//        LITELLM_BASE_URL  → https://litellm.siriusxm.com
+//        LITELLM_BASE_URL  → https://litellm.example.com
 //        LITELLM_MODEL     → claude-sonnet-4-6
 //   3. Deploy as Web App (Execute as: Me, Access: Anyone within SiriusXM)
 //
 // Architecture:
 //   LiteLLM calls are made from the user's browser (not GAS servers)
-//   so the internal litellm.siriusxm.com endpoint is reachable.
+//   so the internal LiteLLM endpoint is reachable.
 //   GAS handles: serving HTML with injected credentials, building
 //   Stella's system prompt with dynamic KB routing, and all
 //   campaign data reads/writes via StellaDB.gs.
@@ -151,7 +151,7 @@ function doGet(e) {
   var t = HtmlService.createTemplateFromFile("Index");
 
   t.apiKey  = props.getProperty("LITELLM_API_KEY")  || "";
-  t.baseUrl = props.getProperty("LITELLM_BASE_URL") || "https://litellm.siriusxm.com";
+  t.baseUrl = props.getProperty("LITELLM_BASE_URL") || "https://litellm.example.com";
   t.model   = props.getProperty("LITELLM_MODEL")    || "claude-sonnet-4-6";
 
   // Seller view — passed as ?seller=1&am=first.last@siriusxm.com
@@ -366,7 +366,7 @@ function readGoogleDoc(url) {
 function testStellaConfig() {
   var props = PropertiesService.getScriptProperties();
   var apiKey  = props.getProperty("LITELLM_API_KEY");
-  var baseUrl = props.getProperty("LITELLM_BASE_URL") || "https://litellm.siriusxm.com";
+  var baseUrl = props.getProperty("LITELLM_BASE_URL") || "https://litellm.example.com";
   var model   = props.getProperty("LITELLM_MODEL")    || "claude-sonnet-4-6";
   var dbId    = props.getProperty("STELLA_DB_SHEET_ID");
 

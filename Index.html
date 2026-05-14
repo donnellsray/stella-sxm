@@ -2663,11 +2663,11 @@
 
   // ── Platform URL bases ────────────────────────────────────
   var URLS = {
-    slingshot: "http://slingshot.savagebeast.com/slingshot/orderplan/",
-    oms:       "https://pandora-ads.savagebeast.com/orders/",
+    slingshot: "http://adserver.example.com/slingshot/orderplan/",
+    oms:       "https://oms.example.com/orders/",
     omsSuffix: "/planning",
-    aria:      "https://aria.adtools.siriusxmmedia.com/reports/campaign/",
-    jira:      "https://jira.savagebeast.com/browse/"
+    aria:      "https://reporting.example.com/reports/campaign/",
+    jira:      "https://jira.example.com/browse/"
   };
 
   // ── Flight date parsing ───────────────────────────────────
@@ -3545,7 +3545,7 @@
     if (def.type==="badge")  { var st=(val||"UPCOMING").toUpperCase(); var sk=st==="ENDING SOON"?"ENDING":st; return '<span class="s-badge s-'+sk+'">'+st+'</span>'; }
     if (def.type==="pacing") { var p=parseFloat(val)||0; var pc=p>=90?"good":p>=80?"warn":p>0?"risk":""; return p>0?'<span class="'+pc+'" style="font-weight:600;">'+p+'%</span>':'—'; }
     if (def.type==="link")   return val?'<a href="'+esc(val)+'" target="_blank" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:none;font-size:0.82rem;">🔗 Open</a>':'—';
-    if (def.type==="ticket") { if(!val) return '—'; var u=val.match(/^https?:\/\//)?val:'https://jira.savagebeast.com/browse/'+val; return '<a href="'+esc(u)+'" target="_blank" onclick="event.stopPropagation()" style="color:var(--accent);font-size:0.82rem;">'+esc(val)+'</a>'; }
+    if (def.type==="ticket") { if(!val) return '—'; var u=val.match(/^https?:\/\//)?val:'https://jira.example.com/browse/'+val; return '<a href="'+esc(u)+'" target="_blank" onclick="event.stopPropagation()" style="color:var(--accent);font-size:0.82rem;">'+esc(val)+'</a>'; }
     if (def.type==="bool")   return (val===true||val==="true"||val===1)?'<span style="color:var(--green);font-weight:700;">✓</span>':'—';
     if (def.type==="notes")  return val?'<span title="'+esc(val)+'">'+esc((val+"").substring(0,38))+(val.length>38?"…":"")+'</span>':'—';
     return esc(val||"—");
@@ -6338,9 +6338,9 @@
       return '<a href="'+href+'" target="_blank" rel="noopener" class="aq-link">'+label+'</a>';
     }
     var links =
-      lnk("Slingshot", ssId ? "http://slingshot.savagebeast.com/slingshot/orderplan/"+ssId : "") +
-      lnk("OMS", omsId ? "https://pandora-ads.savagebeast.com/orders/"+omsId+"/planning" : "") +
-      lnk("ARIA", ssId ? "https://aria.adtools.siriusxmmedia.com/reports/campaign/"+ssId : "") +
+      lnk("Slingshot", ssId ? "http://adserver.example.com/slingshot/orderplan/"+ssId : "") +
+      lnk("OMS", omsId ? "https://oms.example.com/orders/"+omsId+"/planning" : "") +
+      lnk("ARIA", ssId ? "https://reporting.example.com/reports/campaign/"+ssId : "") +
       lnk("Salesforce", sfUrl) +
       lnk("IO Case", ioUrl) +
       lnk("DAM Folder", damUrl) +
@@ -6483,20 +6483,20 @@
 
   // ── Quick links widget ─────────────────────────────────────
   var QUICK_LINKS = [
-    { id:"ql_adsmgr",      icon:"📦", bg:"#003087", label:"Ads Manager",   sub:"Orders & line items",    href:"https://pandora-ads.savagebeast.com/?userRoleName=Account%20Manager&adEntityName=Orders" },
+    { id:"ql_adsmgr",      icon:"📦", bg:"#003087", label:"Ads Manager",   sub:"Orders & line items",    href:"https://oms.example.com/?userRoleName=Account%20Manager&adEntityName=Orders" },
     { id:"ql_slack",       icon:"💬", bg:"#4a154b", label:"#fyi-all",      sub:"Company news",           href:"https://join.slack.com/share/enQtMTA5OTMyMjI3MTk5MDgtOGMwZGI4NjZhMzFjYjg5N2FhZDk5ZWNmMjI2ZDNmZTQzMWJjOWQ5ZTIwNDg2M2ZlMDdiMWJmOGM0NzdhZmYyMg" },
-    { id:"ql_hub",         icon:"🏠", bg:"#0f766e", label:"The Hub",        sub:"Internal tools portal", href:"https://hub.docker.savagebeast.com/" },
-    { id:"ql_aria",        icon:"📊", bg:"#7c3aed", label:"ARIA",           sub:"Reporting",              href:"https://aria.adtools.siriusxmmedia.com" },
+    { id:"ql_hub",         icon:"🏠", bg:"#0f766e", label:"The Hub",        sub:"Internal tools portal", href:"https://tools-hub.example.com/" },
+    { id:"ql_aria",        icon:"📊", bg:"#7c3aed", label:"ARIA",           sub:"Reporting",              href:"https://reporting.example.com" },
     { id:"ql_centerstage", icon:"⭐", bg:"#0f172a", label:"CenterStage",    sub:"Service portal",         href:"https://centerstage.siriusxmpandora.com/esc?id=ec_centerstage_index" }
   ];
   var CS_TOOLS = [
-    { id:"ct_ratecard",  icon:"💰", bg:"#0369a1", label:"Ratecard",           sub:"Pricing & packages",      href:"https://hub.docker.savagebeast.com/tools/ratecard/overview" },
-    { id:"ct_podcast",   icon:"🎙", bg:"#7c3aed", label:"Podcast Explorer",   sub:"Podcast spotlight",       href:"https://hub.docker.savagebeast.com/podcasts/podcast-explorer/spotlight" },
-    { id:"ct_audience",  icon:"🎯", bg:"#0891b2", label:"Audience Discovery", sub:"Segment builder",         href:"https://hub.docker.savagebeast.com/audience-discovery/segments" },
-    { id:"ct_agencyrc",  icon:"🏢", bg:"#b45309", label:"Agency Ratecard",    sub:"Agency pricing",          href:"https://hub.docker.savagebeast.com/agency-ratecard" },
-    { id:"ct_vendor",    icon:"🗂", bg:"#6d28d9", label:"Vendor Matrix",      sub:"Direct vendor list",      href:"https://hub.docker.savagebeast.com/vendor-matrix/direct" },
-    { id:"ct_specs",     icon:"📐", bg:"#0f766e", label:"Specs Generator",    sub:"Creative specs",          href:"https://hub.docker.savagebeast.com/tools/specs-tool/generator" },
-    { id:"ct_csone",     icon:"📚", bg:"#374151", label:"CS One Resource",    sub:"Resources & guides",      href:"https://hub.docker.savagebeast.com/resources/one-resource" }
+    { id:"ct_ratecard",  icon:"💰", bg:"#0369a1", label:"Ratecard",           sub:"Pricing & packages",      href:"https://tools-hub.example.com/tools/ratecard/overview" },
+    { id:"ct_podcast",   icon:"🎙", bg:"#7c3aed", label:"Podcast Explorer",   sub:"Podcast spotlight",       href:"https://tools-hub.example.com/podcasts/podcast-explorer/spotlight" },
+    { id:"ct_audience",  icon:"🎯", bg:"#0891b2", label:"Audience Discovery", sub:"Segment builder",         href:"https://tools-hub.example.com/audience-discovery/segments" },
+    { id:"ct_agencyrc",  icon:"🏢", bg:"#b45309", label:"Agency Ratecard",    sub:"Agency pricing",          href:"https://tools-hub.example.com/agency-ratecard" },
+    { id:"ct_vendor",    icon:"🗂", bg:"#6d28d9", label:"Vendor Matrix",      sub:"Direct vendor list",      href:"https://tools-hub.example.com/vendor-matrix/direct" },
+    { id:"ct_specs",     icon:"📐", bg:"#0f766e", label:"Specs Generator",    sub:"Creative specs",          href:"https://tools-hub.example.com/tools/specs-tool/generator" },
+    { id:"ct_csone",     icon:"📚", bg:"#374151", label:"CS One Resource",    sub:"Resources & guides",      href:"https://tools-hub.example.com/resources/one-resource" }
   ];
 
   function getHiddenLinks() {
