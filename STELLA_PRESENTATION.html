@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stella AI — Leadership Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sxm-blue:  #003087;
+    --sxm-sky:   #0099d8;
+    --sxm-navy:  #001845;
+    --bg:        #f0f3f8;
+    --surface:   #ffffff;
+    --text:      #0f172a;
+    --muted:     #64748b;
+    --border:    #e2e8f0;
+    --green:     #16a34a;
+    --green-bg:  #dcfce7;
+    --amber:     #d97706;
+    --amber-bg:  #fef3c7;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  /* ── Nav dots ──────────────────────────────────────────────── */
+  .slide-nav {
+    position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 10px; z-index: 100;
+  }
+  .slide-nav a {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(0,48,135,0.2); display: block;
+    transition: background 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+  .slide-nav a:hover { background: var(--sxm-blue); transform: scale(1.3); }
+
+  /* ── Slide base ────────────────────────────────────────────── */
+  .slide {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (max-width: 768px) { .slide { padding: 40px 24px; } }
+
+  /* ── Slide 1 — Cover ───────────────────────────────────────── */
+  #s1 {
+    background: linear-gradient(145deg, var(--sxm-navy) 0%, var(--sxm-blue) 60%, #0054c8 100%);
+    color: #fff;
+    align-items: flex-start;
+  }
+  #s1::before {
+    content: '';
+    position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,153,216,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cover-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(255,255,255,0.6); margin-bottom: 20px;
+  }
+  .cover-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .cover-title span { color: var(--sxm-sky); }
+  .cover-sub {
+    font-size: 1.15rem; color: rgba(255,255,255,0.75);
+    max-width: 520px; line-height: 1.6; margin-bottom: 48px;
+  }
+  .cover-pills { display: flex; gap: 12px; flex-wrap: wrap; }
+  .cover-pill {
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 40px; padding: 8px 18px;
+    font-size: 0.8rem; font-weight: 500; color: rgba(255,255,255,0.9);
+  }
+  .cover-date {
+    position: absolute; bottom: 32px; right: 80px;
+    font-family: 'Space Mono', monospace; font-size: 0.65rem;
+    color: rgba(255,255,255,0.35); letter-spacing: 0.1em;
+  }
+
+  /* ── Section label ─────────────────────────────────────────── */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--sxm-sky);
+    margin-bottom: 12px;
+  }
+  .slide-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .slide-sub {
+    font-size: 1rem; color: var(--muted); max-width: 600px;
+    line-height: 1.65; margin-bottom: 40px;
+  }
+
+  /* ── Slide 2 — Problem ─────────────────────────────────────── */
+  #s2 { background: var(--surface); }
+  .problem-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 32px;
+  }
+  @media (max-width: 700px) { .problem-grid { grid-template-columns: 1fr; } }
+  .problem-card {
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px; background: var(--bg);
+  }
+  .problem-card .num {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.2rem; font-weight: 700; color: var(--sxm-blue);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .problem-card .label {
+    font-size: 0.88rem; font-weight: 600; margin-bottom: 6px;
+  }
+  .problem-card .desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+  .callout {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe; border-radius: 12px;
+    padding: 18px 22px; font-size: 0.9rem; line-height: 1.6;
+    color: var(--sxm-blue);
+  }
+  .callout strong { font-weight: 700; }
+
+  /* ── Slide 3 — North Star ──────────────────────────────────── */
+  #s3 {
+    background: linear-gradient(160deg, var(--sxm-navy) 0%, #001a4a 100%);
+    color: #fff;
+  }
+  .quote-block {
+    border-left: 4px solid var(--sxm-sky);
+    padding: 20px 28px; margin: 32px 0;
+    background: rgba(255,255,255,0.05); border-radius: 0 12px 12px 0;
+    max-width: 680px;
+  }
+  .quote-text {
+    font-size: 1.25rem; font-style: italic; line-height: 1.6;
+    color: rgba(255,255,255,0.9); margin-bottom: 10px;
+  }
+  .quote-attr {
+    font-size: 0.8rem; font-weight: 600;
+    color: var(--sxm-sky); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .ns-points { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
+  .ns-point {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(255,255,255,0.05); border-radius: 10px; padding: 14px 18px;
+  }
+  .ns-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .ns-text { font-size: 0.88rem; line-height: 1.6; color: rgba(255,255,255,0.8); }
+  .ns-text strong { color: #fff; font-weight: 600; }
+
+  /* ── Slide 3B — Glean ─────────────────────────────────────── */
+  #s3b { background: var(--bg); }
+  .glean-compare {
+    display: grid; grid-template-columns: 1fr 48px 1fr; gap: 0;
+    align-items: start; margin-bottom: 24px;
+  }
+  @media (max-width: 700px) {
+    .glean-compare { grid-template-columns: 1fr; }
+    .glean-vs { display: none; }
+  }
+  .glean-col {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 26px;
+  }
+  .glean-col:first-child { border-radius: 16px 0 0 16px; border-right: none; }
+  .glean-col:last-child  { border-radius: 0 16px 16px 0; border-left: none; }
+  .gc-head {
+    font-family: 'Space Mono', monospace; font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 10px;
+  }
+  .gc-head-glean  { background: #f1f5f9; color: #475569; }
+  .gc-head-stella { background: #dbeafe; color: var(--sxm-blue); }
+  .gc-role { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: var(--text); }
+  .gc-points { display: flex; flex-direction: column; gap: 8px; }
+  .gc-point {
+    font-size: 0.8rem; color: var(--muted); line-height: 1.5;
+    padding: 8px 12px; background: var(--bg); border-radius: 8px;
+  }
+  .glean-vs {
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 0.85rem;
+    font-weight: 700; color: var(--muted);
+    background: var(--surface); border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .glean-callout {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe; border-radius: 12px;
+    padding: 18px 22px; font-size: 0.88rem; line-height: 1.7;
+    color: var(--sxm-blue);
+  }
+  .glean-callout strong { font-weight: 700; }
+
+  /* ── Slide 4 — What Is Stella ──────────────────────────────── */
+  #s4 { background: var(--bg); }
+  .stella-intro {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+  }
+  @media (max-width: 800px) { .stella-intro { grid-template-columns: 1fr; } }
+  .stella-visual {
+    background: linear-gradient(145deg, var(--sxm-navy), var(--sxm-blue));
+    border-radius: 20px; padding: 36px; text-align: center; color: #fff;
+  }
+  .stella-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+  }
+  .stella-visual h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+  .stella-visual p { font-size: 0.82rem; opacity: 0.75; line-height: 1.6; }
+  .stella-attrs { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+  .stella-attr {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px;
+    font-size: 0.78rem;
+  }
+  .stella-points { display: flex; flex-direction: column; gap: 16px; }
+  .stella-point {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px;
+  }
+  .stella-point .sp-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+  }
+  .stella-point .sp-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--sxm-blue), var(--sxm-sky));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .stella-point .sp-title { font-size: 0.9rem; font-weight: 600; }
+  .stella-point .sp-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+
+  /* ── Slide 5 — Features ────────────────────────────────────── */
+  #s5 { background: var(--surface); }
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  @media (max-width: 900px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .feature-grid { grid-template-columns: 1fr; } }
+  .feature-card {
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px; background: var(--bg);
+    transition: box-shadow 0.2s;
+  }
+  .feature-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+  .feature-card .fc-icon {
+    font-size: 1.6rem; margin-bottom: 12px; display: block;
+  }
+  .feature-card .fc-title {
+    font-size: 0.92rem; font-weight: 700; margin-bottom: 6px; color: var(--sxm-blue);
+  }
+  .feature-card .fc-desc {
+    font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+  }
+  .live-badge {
+    display: inline-block; background: var(--green-bg); color: var(--green);
+    font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 2px 8px; border-radius: 20px; margin-bottom: 8px;
+  }
+
+  /* ── Slide 6 — How It Works ────────────────────────────────── */
+  #s6 { background: var(--bg); }
+  .arch-row {
+    display: flex; align-items: stretch; gap: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; margin-bottom: 16px;
+  }
+  .arch-label {
+    background: var(--sxm-blue); color: #fff; writing-mode: vertical-rl;
+    text-orientation: mixed; transform: rotate(180deg);
+    padding: 16px 10px; font-size: 0.65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em; white-space: nowrap;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .arch-cells {
+    display: flex; flex: 1; gap: 0; flex-wrap: wrap;
+  }
+  .arch-cell {
+    flex: 1; min-width: 160px; padding: 16px 18px;
+    border-left: 1px solid var(--border);
+  }
+  .arch-cell:first-child { border-left: none; }
+  .arch-cell .ac-icon { font-size: 1.1rem; margin-bottom: 6px; display: block; }
+  .arch-cell .ac-title { font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; }
+  .arch-cell .ac-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+  .arch-note {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+    padding: 14px 18px; font-size: 0.8rem; color: var(--sxm-blue); line-height: 1.6;
+  }
+  .arch-note strong { font-weight: 700; }
+
+  /* ── Slide 7 — The Numbers ─────────────────────────────────── */
+  #s7 {
+    background: linear-gradient(145deg, var(--sxm-navy) 0%, #002060 100%);
+    color: #fff;
+  }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px;
+  }
+  @media (max-width: 700px) { .stat-grid { grid-template-columns: 1fr; } }
+  .stat-card {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 28px 22px; text-align: center;
+  }
+  .stat-card .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.4rem; font-weight: 700; color: var(--sxm-sky);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .stat-card .stat-label {
+    font-size: 0.82rem; color: rgba(255,255,255,0.7); line-height: 1.5;
+  }
+  .roi-bar {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 22px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .roi-section { text-align: center; }
+  .roi-section .rs-num {
+    font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .roi-section .rs-label { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+  .roi-arrow {
+    font-size: 1.5rem; color: var(--sxm-sky); font-weight: 300;
+  }
+  .jennifer-box {
+    margin-top: 20px;
+    background: rgba(0,153,216,0.12); border: 1px solid rgba(0,153,216,0.3);
+    border-radius: 12px; padding: 16px 22px;
+    font-size: 0.88rem; line-height: 1.65; color: rgba(255,255,255,0.85);
+  }
+  .jennifer-box strong { color: var(--sxm-sky); }
+
+  /* ── Slide 8 — QTC ─────────────────────────────────────────── */
+  #s8 { background: var(--surface); }
+  .qtc-flow {
+    display: flex; align-items: flex-start; gap: 0;
+    overflow-x: auto; padding-bottom: 8px;
+  }
+  .qtc-phase {
+    flex: 1; min-width: 160px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px; margin: 0 6px;
+  }
+  .qtc-phase .qp-num {
+    font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  .qtc-phase .qp-name { font-size: 0.92rem; font-weight: 700; margin-bottom: 10px; }
+  .qtc-phase .qp-steps { display: flex; flex-direction: column; gap: 6px; }
+  .qp-step {
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 0.72rem; color: var(--muted); line-height: 1.4;
+  }
+  .qp-step .stella-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+  }
+  .p1-color { color: #0f766e; } .p1-dot { background: #0f766e; }
+  .p2-color { color: #7c3aed; } .p2-dot { background: #7c3aed; }
+  .p3-color { color: #d97706; } .p3-dot { background: #d97706; }
+  .p4-color { color: #dc2626; } .p4-dot { background: #dc2626; }
+  .qtc-arrow {
+    align-self: center; font-size: 1.2rem; color: var(--muted);
+    flex-shrink: 0; padding: 0 4px;
+  }
+  .stella-tag-inline {
+    display: inline-block; background: #dbeafe; color: var(--sxm-blue);
+    font-size: 0.6rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+    font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em;
+    vertical-align: middle;
+  }
+
+  /* ── Slide 9 — Roadmap ─────────────────────────────────────── */
+  #s9 { background: var(--bg); }
+  .roadmap-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 700px) { .roadmap-cols { grid-template-columns: 1fr; } }
+  .rm-col-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .rm-badge {
+    font-family: 'Space Mono', monospace; font-size: 0.62rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 4px 12px; border-radius: 20px;
+  }
+  .rm-badge.now { background: var(--green-bg); color: var(--green); }
+  .rm-badge.next { background: var(--amber-bg); color: var(--amber); }
+  .rm-items { display: flex; flex-direction: column; gap: 10px; }
+  .rm-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .rm-item .ri-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .rm-item .ri-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 3px; }
+  .rm-item .ri-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── Slide 10 — Ask ────────────────────────────────────────── */
+  #s10 {
+    background: linear-gradient(145deg, var(--sxm-navy) 0%, var(--sxm-blue) 100%);
+    color: #fff;
+  }
+  .ask-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0; }
+  @media (max-width: 700px) { .ask-grid { grid-template-columns: 1fr; } }
+  .ask-card {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px; padding: 24px;
+  }
+  .ask-card .ak-num {
+    font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--sxm-sky); margin-bottom: 10px;
+  }
+  .ask-card .ak-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .ask-card .ak-desc { font-size: 0.8rem; line-height: 1.65; color: rgba(255,255,255,0.75); }
+  .ask-card .ak-desc strong { color: #fff; }
+  .closing {
+    text-align: center; padding: 20px 0 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .closing p {
+    font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.7; max-width: 560px; margin: 0 auto;
+  }
+  .closing strong { color: #fff; font-weight: 600; }
+
+  /* ── Dividers ──────────────────────────────────────────────── */
+  .divider {
+    width: 48px; height: 3px; border-radius: 3px;
+    background: var(--sxm-sky); margin-bottom: 28px;
+  }
+  .divider-white { background: rgba(0,153,216,0.6); }
+
+  /* ── Audit table ───────────────────────────────────────────── */
+  .audit-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+  .audit-table th {
+    text-align: left; padding: 8px 12px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted);
+    border-bottom: 2px solid var(--border);
+  }
+  .audit-table td {
+    padding: 10px 12px; font-size: 0.8rem;
+    border-bottom: 1px solid var(--border); vertical-align: middle;
+  }
+  .audit-table tr:last-child td { border-bottom: none; }
+  .audit-table .task-rank {
+    font-family: 'Space Mono', monospace; font-weight: 700;
+    color: var(--sxm-blue); font-size: 0.75rem;
+  }
+  .audit-table .task-hrs {
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.8rem;
+  }
+  .has-stella { background: #f0fdf4; }
+  .no-coverage { background: #fff7ed; }
+  .coverage-badge {
+    display: inline-block; font-size: 0.65rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px;
+    font-family: 'Space Mono', monospace; text-transform: uppercase;
+  }
+  .badge-stella { background: var(--green-bg); color: var(--green); }
+  .badge-partial { background: #fef3c7; color: #92400e; }
+  .badge-gap { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body>
+
+<!-- Slide nav dots -->
+<nav class="slide-nav" aria-label="Slide navigation">
+  <a href="#s1" title="Cover"></a>
+  <a href="#s2" title="The Problem"></a>
+  <a href="#s3" title="North Star"></a>
+  <a href="#s3b" title="Glean &amp; Stella"></a>
+  <a href="#s4" title="What Is Stella"></a>
+  <a href="#s5" title="Features"></a>
+  <a href="#s6" title="How It Works"></a>
+  <a href="#s7" title="The Numbers"></a>
+  <a href="#s8" title="QTC Workflow"></a>
+  <a href="#s9" title="Roadmap"></a>
+  <a href="#s9b" title="Agentic Vision"></a>
+  <a href="#s10" title="The Ask"></a>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 1 — COVER
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s1">
+  <div class="cover-eyebrow">SiriusXM Client Services · AI Enablement</div>
+  <h1 class="cover-title">Meet <span>Stella</span>.<br>An AM's AI<br>Best Friend.</h1>
+  <p class="cover-sub">
+    Named for Sirius, the Dog Star — because every AM deserves a best friend who knows your campaigns,
+    handles the busywork, and is always one click away. Purpose-built for the SiriusXM CS team,
+    deployed today, on infrastructure you already own.
+  </p>
+  <div class="cover-pills">
+    <span class="cover-pill">✅ Live &amp; deployed</span>
+    <span class="cover-pill">🏗️ Built on Google Workspace</span>
+    <span class="cover-pill">🤖 Powered by Claude (internal LiteLLM)</span>
+    <span class="cover-pill">💰 No new budget required</span>
+  </div>
+  <div class="cover-date">APRIL 2026 · CONFIDENTIAL</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 2 — THE PROBLEM
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s2">
+  <div class="section-label">The Problem</div>
+  <h2 class="slide-title">445 Hours of Manual Work.<br>Every Campaign Cycle.</h2>
+  <p class="slide-sub">
+    The Theorem Audit measured where AMs actually spend their time. The top 10 tasks alone
+    account for 445+ hours of manual, repeatable work — most of it copy-paste between systems.
+  </p>
+  <div class="divider"></div>
+
+  <table class="audit-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Task</th>
+        <th>Hours</th>
+        <th>Time / Instance</th>
+        <th>Stella Coverage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="no-coverage">
+        <td class="task-rank">1</td>
+        <td>Client communications (ad hoc emails / calls)</td>
+        <td class="task-hrs">59.24</td>
+        <td>~9× per campaign</td>
+        <td><span class="coverage-badge badge-stella">Stella ✓</span></td>
+      </tr>
+      <tr class="no-coverage">
+        <td class="task-rank">2</td>
+        <td>Check campaign pacing to delivery goal</td>
+        <td class="task-hrs">57.57</td>
+        <td>18 min / check</td>
+        <td><span class="coverage-badge badge-stella">Stella ✓</span></td>
+      </tr>
+      <tr>
+        <td class="task-rank">3</td>
+        <td>Internal sales / rep communications</td>
+        <td class="task-hrs">54.12</td>
+        <td>11 min / instance</td>
+        <td><span class="coverage-badge badge-stella">Stella ✓</span></td>
+      </tr>
+      <tr class="no-coverage">
+        <td class="task-rank">4</td>
+        <td>Pull and build campaign delivery reports</td>
+        <td class="task-hrs">49.50</td>
+        <td>25 min / report</td>
+        <td><span class="coverage-badge badge-stella">Stella ✓</span></td>
+      </tr>
+      <tr>
+        <td class="task-rank">5</td>
+        <td>Update alternate campaign management tools</td>
+        <td class="task-hrs">45.10</td>
+        <td>19 min / update</td>
+        <td><span class="coverage-badge badge-stella">Stella ✓</span></td>
+      </tr>
+      <tr class="no-coverage">
+        <td class="task-rank">6</td>
+        <td>Submit Theorem trafficking task</td>
+        <td class="task-hrs">43.30</td>
+        <td>22 min / task</td>
+        <td><span class="coverage-badge badge-partial">Roadmap</span></td>
+      </tr>
+      <tr>
+        <td class="task-rank">7</td>
+        <td>Initial client RFP / campaign comms</td>
+        <td class="task-hrs">41.10</td>
+        <td>30 min / RFP</td>
+        <td><span class="coverage-badge badge-stella">Stella ✓</span></td>
+      </tr>
+      <tr>
+        <td class="task-rank">8</td>
+        <td>Adjust / revise media plan in ad server</td>
+        <td class="task-hrs">36.12</td>
+        <td>29 min / revision</td>
+        <td><span class="coverage-badge badge-partial">Phase 2</span></td>
+      </tr>
+      <tr class="no-coverage">
+        <td class="task-rank">9</td>
+        <td>Manage Theorem trafficking task</td>
+        <td class="task-hrs">29.96</td>
+        <td>15 min / task</td>
+        <td><span class="coverage-badge badge-partial">Roadmap</span></td>
+      </tr>
+      <tr>
+        <td class="task-rank">10</td>
+        <td>Review / validate 3rd-party tags</td>
+        <td class="task-hrs">29.30</td>
+        <td>30 min / review</td>
+        <td><span class="coverage-badge badge-partial">Roadmap</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 3 — NORTH STAR
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s3">
+  <div class="section-label">Strategic Context</div>
+  <h2 class="slide-title" style="color:#fff;">This Maps Directly<br>to the CS North Star.</h2>
+  <div class="divider divider-white"></div>
+
+  <div class="quote-block">
+    <p class="quote-text">
+      "Continue transforming the Client Services Organization away from a
+      task-execution function into a strategic-advisory engine by integrating
+      AI as a standard operating partner."
+    </p>
+    <p class="quote-attr">CS Task Force — North Star Directive</p>
+  </div>
+
+  <div class="ns-points">
+    <div class="ns-point">
+      <span class="ns-icon">🎯</span>
+      <p class="ns-text"><strong>Stella is the mechanism, not a side project.</strong> Every hour recovered from manual tasks is an hour redirected toward client strategy, relationship depth, and revenue growth.</p>
+    </div>
+    <div class="ns-point">
+      <span class="ns-icon">📊</span>
+      <p class="ns-text"><strong>Leadership is already asking the right question.</strong> "If we save X hours per week, what are AMs doing with that time?" Stella answers it — with logged activity, not estimates.</p>
+    </div>
+    <div class="ns-point">
+      <span class="ns-icon">🏗️</span>
+      <p class="ns-text"><strong>Built on infrastructure SXM already owns.</strong> Google Workspace + the internal Claude Code enterprise account. No new vendor. No new contract. No IT dependency to get started.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 3B — GLEAN & STELLA
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s3b">
+  <div class="section-label">Glean &amp; Stella</div>
+  <h2 class="slide-title">Glean Finds Information.<br>Stella Takes Action.</h2>
+  <p class="slide-sub">Both tools are AI. Both reduce friction. They solve fundamentally different problems — and work better together than apart.</p>
+  <div class="divider"></div>
+
+  <div class="glean-compare">
+    <div class="glean-col">
+      <span class="gc-head gc-head-glean">Glean</span>
+      <div class="gc-role">Enterprise Search &amp; Knowledge Retrieval</div>
+      <div class="gc-points">
+        <div class="gc-point">🔍 Searches across Slack, Confluence, Drive, Salesforce, and other connected sources</div>
+        <div class="gc-point">📄 Surfaces existing documents, decisions, and institutional knowledge you didn't know existed</div>
+        <div class="gc-point">🏢 Org-wide tool — general purpose, useful across every department</div>
+        <div class="gc-point">❓ Answers: <em>"Where is the thing I'm looking for?"</em></div>
+      </div>
+    </div>
+    <div class="glean-vs">vs</div>
+    <div class="glean-col">
+      <span class="gc-head gc-head-stella">Stella</span>
+      <div class="gc-role">CS Domain Operating Partner</div>
+      <div class="gc-points">
+        <div class="gc-point">⚙️ Acts on live campaign data — pacing, flights, tickets, billing workflows in real time</div>
+        <div class="gc-point">📋 Manages campaigns, surfaces alerts, drafts emails, and walks through CS-specific processes</div>
+        <div class="gc-point">🎯 Purpose-built for CS — knows SXM tools, terminology, and workflow from IO to reconciliation</div>
+        <div class="gc-point">✅ Answers: <em>"What should I do right now, and how do I do it?"</em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="glean-callout">
+    <strong>The right framing for leadership:</strong> Glean is the library. Stella is the colleague who already knows your book.
+    Glean gives AMs faster access to institutional knowledge across all of SXM. Stella gives AMs a domain expert who knows their
+    specific campaigns and acts alongside them — with CS processes, SXM tooling, and live data baked in.
+    These are <strong>complementary capabilities</strong>. Stella's CS specificity is precisely what makes it valuable even after Glean is deployed.
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 4 — WHAT IS STELLA
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s4">
+  <div class="section-label">The Solution</div>
+  <h2 class="slide-title">One Tool. Every Workflow.<br>Always On.</h2>
+  <div class="divider"></div>
+
+  <div class="stella-intro">
+    <div class="stella-visual">
+      <div class="stella-avatar">⭐</div>
+      <h3>Stella AI</h3>
+      <p>Named for Sirius, the Dog Star — an AM's AI best friend. She knows your campaigns, your workflows, and your clients. Man's best friend, but make it AI.</p>
+      <div class="stella-attrs">
+        <div class="stella-attr">🌐 Accessible via a single URL — no install</div>
+        <div class="stella-attr">🔐 Google login — no separate sign-in</div>
+        <div class="stella-attr">📋 Each AM gets their own campaign database</div>
+        <div class="stella-attr">🤖 Powered by Claude via internal LiteLLM</div>
+        <div class="stella-attr">✅ Live and in use today</div>
+      </div>
+    </div>
+    <div class="stella-points">
+      <div class="stella-point">
+        <div class="sp-head">
+          <div class="sp-icon">📂</div>
+          <span class="sp-title">Campaign Database</span>
+        </div>
+        <p class="sp-desc">Each AM tracks all active campaigns — status, pacing, flight dates, tickets, platform links — in one place. Accessible from any screen, no spreadsheet hunting.</p>
+      </div>
+      <div class="stella-point">
+        <div class="sp-head">
+          <div class="sp-icon">🤖</div>
+          <span class="sp-title">AI Chat — Context-Aware</span>
+        </div>
+        <p class="sp-desc">Stella knows every active campaign without copy-paste. Ask about pacing, billing workflows, or draft a client email — she answers with your actual campaign data.</p>
+      </div>
+      <div class="stella-point">
+        <div class="sp-head">
+          <div class="sp-icon">📊</div>
+          <span class="sp-title">Live Dashboard</span>
+        </div>
+        <p class="sp-desc">Auto-generated alerts for flights ending soon, pacing under 80%, untrafficked campaigns, and upcoming launch dates — before the AM has to ask.</p>
+      </div>
+      <div class="stella-point">
+        <div class="sp-head">
+          <div class="sp-icon">🏢</div>
+          <span class="sp-title">Virtual Agent Office</span>
+        </div>
+        <p class="sp-desc">Dedicated workspace for each AI agent — Billing, Trafficking, Reporting, Handoff, and Tagging. Agents go live as their knowledge bases are built out.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 5 — FEATURES
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s5">
+  <div class="section-label">What's Live Today</div>
+  <h2 class="slide-title">Everything an AM Needs<br>in One Place.</h2>
+  <div class="divider"></div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">📋</span>
+      <div class="fc-title">Campaign Management</div>
+      <p class="fc-desc">Add, edit, track campaigns. Card grid + sortable list view. Structured flight dates. Per-section inline editing — change just pacing without opening the full form.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">💬</span>
+      <div class="fc-title">Stella AI Chat</div>
+      <p class="fc-desc">Persistent popup from any screen. Inline on every campaign detail view. Pre-loaded with campaign context — no pasting required. Billing KB answers common workflow questions instantly.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">📅</span>
+      <div class="fc-title">Campaign Calendar</div>
+      <p class="fc-desc">Gantt chart showing all campaigns across a 6-month rolling window. Color-coded by status. Toggle to sortable list view. Click any bar to jump to campaign detail.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">🔔</span>
+      <div class="fc-title">Campaign Activity Feed</div>
+      <p class="fc-desc">Notification feed for flights ending in 7 days, pacing under 80%, and untrafficked live campaigns. Per-item clear button. Click any alert for a quick-links popup — Slingshot, OMS, SF, and more.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">🌟</span>
+      <div class="fc-title">Daily Morning Briefing</div>
+      <p class="fc-desc">Once per day, Stella reviews your campaigns and writes a personalized natural-language briefing in her own voice. Appears as a dashboard banner and pre-loads the chat — no prompting required.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">✅</span>
+      <div class="fc-title">To-Do &amp; Task List</div>
+      <p class="fc-desc">Personal task list with optional due dates and campaign tie-ins. Checkbox marks done. Auto-archive setting. Stella knows which campaigns are connected to your open tasks.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">🔗</span>
+      <div class="fc-title">Resources &amp; Tools Hub</div>
+      <p class="fc-desc">All internal tools, quick links, and CS resources in one browseable card grid. AMs can add their own custom resources with icon and color. No more bookmark hunting.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">👁️</span>
+      <div class="fc-title">Seller View</div>
+      <p class="fc-desc">AMs share a read-only link with sellers — shows all campaigns and detail view without edit controls or AI access. One click to copy the link from the sidebar.</p>
+    </div>
+    <div class="feature-card">
+      <span class="live-badge">Live</span>
+      <span class="fc-icon">🐾</span>
+      <div class="fc-title">Guided Onboarding &amp; Tour</div>
+      <p class="fc-desc">First-time users get a name capture, Stella intro, and a 6-step spotlight tour of every section. Restartable from Settings for demos. Nickname used in all greetings and briefings.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 6 — HOW IT WORKS
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s6">
+  <div class="section-label">Architecture</div>
+  <h2 class="slide-title">Built on Infrastructure<br>SXM Already Owns.</h2>
+  <p class="slide-sub">No external servers. No new vendors. No IT dependency. The entire platform runs inside Google Workspace using SXM's existing Claude Code enterprise account.</p>
+  <div class="divider"></div>
+
+  <div class="arch-row">
+    <div class="arch-label">Frontend</div>
+    <div class="arch-cells">
+      <div class="arch-cell">
+        <span class="ac-icon">🌐</span>
+        <div class="ac-title">Single URL</div>
+        <p class="ac-desc">AM opens a URL in their browser. Google login auto-identifies them. No install.</p>
+      </div>
+      <div class="arch-cell">
+        <span class="ac-icon">📱</span>
+        <div class="ac-title">Single-File App</div>
+        <p class="ac-desc">Full web application delivered by Google Apps Script — CSS, HTML, JS in one file. Works on any device.</p>
+      </div>
+      <div class="arch-cell">
+        <span class="ac-icon">🤖</span>
+        <div class="ac-title">Browser-Side AI</div>
+        <p class="ac-desc">AI calls go directly from browser to internal LiteLLM endpoint. Data stays inside SXM's enterprise boundary.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="arch-row">
+    <div class="arch-label" style="background:#0369a1;">Backend</div>
+    <div class="arch-cells">
+      <div class="arch-cell">
+        <span class="ac-icon">⭐</span>
+        <div class="ac-title">Stella.gs</div>
+        <p class="ac-desc">Orchestrator. Assembles Stella's system prompt with the AM's live campaign data and relevant KB sections before each AI call.</p>
+      </div>
+      <div class="arch-cell">
+        <span class="ac-icon">📊</span>
+        <div class="ac-title">StellaDB.gs</div>
+        <p class="ac-desc">Data layer. One Google Sheet, one tab per AM. Auto-created on first login. Schema migrates silently when new fields are added.</p>
+      </div>
+      <div class="arch-cell">
+        <span class="ac-icon">📚</span>
+        <div class="ac-title">BillingKB.gs</div>
+        <p class="ac-desc">Knowledge base. Billing workflow content injected into Stella's prompt when billing keywords are detected in a question.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="arch-note">
+    <strong>Security note:</strong> No API keys are stored in code — all credentials live in Google Apps Script Properties (encrypted at rest). All AI calls route through SXM's internal LiteLLM gateway. Client campaign data never leaves the enterprise boundary.
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 7 — THE NUMBERS
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s7">
+  <div class="section-label" style="color:rgba(0,153,216,0.8);">The Business Case</div>
+  <h2 class="slide-title" style="color:#fff;">The Numbers Are Already There.<br>We Just Need to Capture Them.</h2>
+  <div class="divider divider-white"></div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-num">445+</div>
+      <div class="stat-label">hours of measured manual work across the top 10 AM tasks (Theorem Audit)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">83</div>
+      <div class="stat-label">CS team members active on AI tools — but only 12 are regular users</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">~30 min</div>
+      <div class="stat-label">average time saved per AI-assisted task across the current prompt library</div>
+    </div>
+  </div>
+
+  <div class="roi-bar">
+    <div class="roi-section">
+      <div class="rs-num" style="color:rgba(255,255,255,0.6);">445 hrs</div>
+      <div class="rs-label">Measured baseline</div>
+    </div>
+    <div class="roi-arrow">→</div>
+    <div class="roi-section">
+      <div class="rs-num" style="color:#34d399;">15–25% reduction</div>
+      <div class="rs-label">Phase 1 (Stella today) = <strong>67–111 hrs recovered</strong></div>
+    </div>
+    <div class="roi-arrow">→</div>
+    <div class="roi-section">
+      <div class="rs-num" style="color:#fbbf24;">40–60% reduction</div>
+      <div class="rs-label">Phase 2 (API integration) = <strong>178–267 hrs recovered</strong></div>
+    </div>
+  </div>
+
+  <div class="jennifer-box">
+    <strong>The leadership question:</strong> "If AMs are saving hours every week, what are they doing with that time?"<br>
+    Stella's answer: those hours go toward deeper client relationships, proactive upsell conversations, and strategic advisory work — which is exactly what the CS North Star calls for. The time savings aren't the end. They're how we get there.
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 8 — QTC WORKFLOW
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s8">
+  <div class="section-label">Workflow Coverage</div>
+  <h2 class="slide-title">Stella Touches Every Stage<br>of the Quote-to-Cash Cycle.</h2>
+  <p class="slide-sub">From the first RFP to final reconciliation — AI assistance mapped at every handoff point.</p>
+  <div class="divider"></div>
+
+  <div class="qtc-flow">
+    <div class="qtc-phase">
+      <div class="qp-num p1-color">Phase 1</div>
+      <div class="qp-name">Pre-Sale</div>
+      <div class="qp-steps">
+        <div class="qp-step"><span class="stella-dot p1-dot"></span>Parse RFP requirements <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p1-dot"></span>Auto-generate standard proposals <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p1-dot"></span>Rate card math &amp; pricing <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p1-dot"></span>Draft client-facing proposal email <span class="stella-tag-inline">Stella</span></div>
+      </div>
+    </div>
+    <div class="qtc-arrow">→</div>
+    <div class="qtc-phase">
+      <div class="qp-num p2-color">Phase 2</div>
+      <div class="qp-name">Post-Sale</div>
+      <div class="qp-steps">
+        <div class="qp-step"><span class="stella-dot p2-dot"></span>Auto-populate IO from proposal <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p2-dot"></span>Revise &amp; re-price on changes <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p2-dot"></span>Draft signature request email <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p2-dot"></span>Validate booking vs IO terms <span class="stella-tag-inline">Stella</span></div>
+      </div>
+    </div>
+    <div class="qtc-arrow">→</div>
+    <div class="qtc-phase">
+      <div class="qp-num p3-color">Phase 3</div>
+      <div class="qp-name">Pre-Launch</div>
+      <div class="qp-steps">
+        <div class="qp-step"><span class="stella-dot p3-dot"></span>QA creative specs against requirements <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p3-dot"></span>Draft asset request emails <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p3-dot"></span>Cross-check tag placement vs IO lines <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p3-dot"></span>Pre-launch QA validation</div>
+      </div>
+    </div>
+    <div class="qtc-arrow">→</div>
+    <div class="qtc-phase">
+      <div class="qp-num p4-color">Phase 4</div>
+      <div class="qp-name">Post-Launch</div>
+      <div class="qp-steps">
+        <div class="qp-step"><span class="stella-dot p4-dot"></span>Monitor pacing, flag under-delivery <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p4-dot"></span>Generate mid-flight &amp; wrap reports <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p4-dot"></span>Reconcile billing vs IO terms <span class="stella-tag-inline">Stella</span></div>
+        <div class="qp-step"><span class="stella-dot p4-dot"></span>Draft credit memos &amp; make-good proposals <span class="stella-tag-inline">Stella</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 9 — ROADMAP
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s9">
+  <div class="section-label">What's Next</div>
+  <h2 class="slide-title">Phase 1 Is Built.<br>Phase 2 Requires One Conversation.</h2>
+  <p class="slide-sub">Current Stella is fully functional without any new infrastructure. The next tier of value — live data, system integration, full automation — requires API access approval.</p>
+  <div class="divider"></div>
+
+  <div class="roadmap-cols">
+    <div>
+      <div class="rm-col-head">
+        <span class="rm-badge now">Shipped — Live Today</span>
+      </div>
+      <div class="rm-items">
+        <div class="rm-item">
+          <span class="ri-icon">✅</span>
+          <div>
+            <div class="ri-title">Campaign Database &amp; Management</div>
+            <p class="ri-desc">Per-AM Google Sheet database. Add, edit, track all campaigns. Card and list views. Structured flight dates. Inline section editing.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">✅</span>
+          <div>
+            <div class="ri-title">Stella AI Chat (Context-Aware)</div>
+            <p class="ri-desc">AI assistant pre-loaded with campaign data. Billing workflow KB. Popup + inline on every campaign detail.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">✅</span>
+          <div>
+            <div class="ri-title">Dashboard — Calendar, Activity, To-Do, Tools</div>
+            <p class="ri-desc">Gantt calendar, campaign activity feed, personal to-do list, quick links, CS tools hub. Drag-and-drop widget order. Per-user customization.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">✅</span>
+          <div>
+            <div class="ri-title">Daily Morning Briefing (LLM-powered)</div>
+            <p class="ri-desc">Stella writes a personalized campaign health summary every morning in her own voice. Appears as a dashboard banner and pre-loads the popup chat. No prompting required.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">✅</span>
+          <div>
+            <div class="ri-title">Virtual Agent Office + Onboarding</div>
+            <p class="ri-desc">Six agent desks (pixel-art + card views). Billing agent live. Guided 6-step onboarding tour for new users with spotlight and tooltips. Restartable for demos.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">✅</span>
+          <div>
+            <div class="ri-title">Seller View + Resources Tab</div>
+            <p class="ri-desc">Read-only shareable link for sellers. All internal tools, quick links, and user-added custom resources in one browseable hub.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="rm-col-head">
+        <span class="rm-badge next">Next — Requires API Access</span>
+      </div>
+      <div class="rm-items">
+        <div class="rm-item">
+          <span class="ri-icon">📡</span>
+          <div>
+            <div class="ri-title">Live Pacing from Ads Manager</div>
+            <p class="ri-desc">Auto-pull pacing data on page load. AMs see real-time delivery without opening Ads Manager. Kills the #2 most time-consuming task.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">☁️</span>
+          <div>
+            <div class="ri-title">Salesforce Integration</div>
+            <p class="ri-desc">Pull IO approval state, case list, and invoice data directly. Write back billing cases and status updates. Kills the copy-paste loop.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">🎫</span>
+          <div>
+            <div class="ri-title">JIRA Auto-Ticket Creation</div>
+            <p class="ri-desc">Stella reads IO details and creates the Theorem ticket automatically — fields, labels, assignments. 22 min saved per campaign.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">🤖</span>
+          <div>
+            <div class="ri-title">Full Multi-Agent Orchestration</div>
+            <p class="ri-desc">"Set up Campaign X end to end" → Stella creates OMS lines, Jira ticket, campaign doc, and launch checklist in one command.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">📧</span>
+          <div>
+            <div class="ri-title">Outlook / Email Integration</div>
+            <p class="ri-desc">Surface new billing cases, JIRA assignments, and IO approval updates as dashboard alerts — before the AM has to go looking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 9B — AGENTIC VISION
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s9b">
+  <div class="section-label">The Vision</div>
+  <h2 class="slide-title">From Reactive Assistant<br>to Autonomous Partner.</h2>
+  <p class="slide-sub">Today, Stella answers when you ask. The next step: Stella acts before you have to.</p>
+  <div class="divider"></div>
+
+  <div class="roadmap-cols">
+    <div>
+      <div class="rm-col-head">
+        <span class="rm-badge now">Shipped — MVP Agentic Features</span>
+      </div>
+      <div class="rm-items">
+        <div class="rm-item">
+          <span class="ri-icon">🌟</span>
+          <div>
+            <div class="ri-title">Daily Morning Briefing</div>
+            <p class="ri-desc">Every morning, Stella reviews your active campaigns and writes a personalized briefing — in her own voice, using live data. Waiting for you when you open the app. No prompting required.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">🔔</span>
+          <div>
+            <div class="ri-title">Campaign Activity Feed</div>
+            <p class="ri-desc">Stella surfaces flight warnings, pacing risk, and untrafficked campaigns as a notification feed. Each alert is actionable — click to see campaign quick-links or open the detail view.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">✅</span>
+          <div>
+            <div class="ri-title">Contextual Task List</div>
+            <p class="ri-desc">AMs manage a personal to-do list with optional campaign tie-ins. Stella knows which campaigns are connected to outstanding tasks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="rm-col-head">
+        <span class="rm-badge next">Vision — Fully Autonomous Stella</span>
+      </div>
+      <div class="rm-items">
+        <div class="rm-item">
+          <span class="ri-icon">⏰</span>
+          <div>
+            <div class="ri-title">Proactive, Scheduled Intelligence</div>
+            <p class="ri-desc">Stella runs on a server-side schedule — not waiting for a page load. She monitors campaigns overnight, generates briefings, and has insights ready before the AM's day starts.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">📲</span>
+          <div>
+            <div class="ri-title">Push Alerts — Email &amp; Dashboard</div>
+            <p class="ri-desc">"Your Campaign X just dropped below 70% pacing. Want me to draft a client update?" Delivered via Outlook or Slack — without the AM opening a tool.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <span class="ri-icon">🤖</span>
+          <div>
+            <div class="ri-title">Stella-Initiated Actions</div>
+            <p class="ri-desc">With tool-use, Stella doesn't just flag problems — she proposes and executes solutions. Update the campaign. Open the billing case. Draft and send the email. AM confirms; Stella acts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SLIDE 10 — THE ASK
+══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s10">
+  <div class="section-label" style="color:rgba(0,153,216,0.8);">The Ask</div>
+  <h2 class="slide-title" style="color:#fff;">What We Need<br>to Go Further.</h2>
+  <div class="divider divider-white"></div>
+
+  <div class="ask-grid">
+    <div class="ask-card">
+      <div class="ak-num">01 — API Access</div>
+      <div class="ak-title">Connect Stella to the Systems</div>
+      <p class="ak-desc">
+        <strong>Ads Manager, OMS, and Salesforce API access</strong> unlocks Phase 2. Live pacing, auto-ticket creation, and cross-system orchestration become possible overnight. This is the single highest-leverage unlock. Likely requires IT/Engineering collaboration on credentials and endpoint exposure.
+      </p>
+    </div>
+    <div class="ask-card">
+      <div class="ak-num">02 — Broader Rollout</div>
+      <div class="ak-title">Scale from One AM to the Team</div>
+      <p class="ak-desc">
+        Stella is live and in use today. <strong>83 AMs have access to AI tools but only 12 use them regularly.</strong> Stella's advantage is that it's purpose-built for CS workflows — not a general GPT. A coordinated rollout with a short enablement session can close the adoption gap fast.
+      </p>
+    </div>
+    <div class="ask-card">
+      <div class="ak-num">03 — Knowledge Base Collaboration</div>
+      <div class="ak-title">Port the Team's Best GPTs into Stella</div>
+      <p class="ak-desc">
+        <strong>Three AMs have already built valuable GPTs</strong> — Trafficking, Campaign Monitoring, and Incremental Upsell. Porting their knowledge into Stella makes those tools available to the whole team in one place, rather than siloed on individual ChatGPT accounts.
+      </p>
+    </div>
+    <div class="ask-card">
+      <div class="ak-num">04 — Dedicated Ownership</div>
+      <div class="ak-title">Someone's Full-Time Job</div>
+      <p class="ak-desc">
+        The CS North Star is a full-time role's worth of work. <strong>Building Stella, enabling adoption, coordinating with IT on API access, onboarding new agents</strong> — none of this scales as a side project. The infrastructure is proven. Now it needs a dedicated owner to take it org-wide.
+      </p>
+    </div>
+  </div>
+
+  <div class="closing">
+    <p>
+      Stella isn't a proposal or a prototype. <strong>It's a working product, built on SXM infrastructure, using budget SXM already pays for.</strong><br>
+      Glean will give the org a better library. Stella gives CS a best friend who already knows the work.<br>
+      The question isn't whether we can build this — we already did. The question is how fast we want the whole team to have it.
+    </p>
+  </div>
+</section>
+
+</body>
+</html>

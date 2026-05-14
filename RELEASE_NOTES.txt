@@ -1,0 +1,265 @@
+STELLA AI — RELEASE NOTES
+SiriusXM Client Services AI Operating Partner
+Last updated: 2026-05-07
+===========================================================================
+
+A plain-language summary of what was built in each phase and why it matters.
+For technical details, see CHANGELOG.txt.
+
+
+── PHASE 17 — OOO Coverage ─────────────────────────────────────────────────
+
+When a colleague is out, you can now load their campaigns directly inside
+Stella — no spreadsheet access needed, no switching accounts.
+
+Click "Cover for AM" in the sidebar, enter their SXM email, and Stella
+loads their full campaign database with read/write access. An amber banner
+at the top of the campaigns view shows you're in coverage mode, and an
+Exit button returns you to your own campaigns instantly.
+
+Optionally attach a coverage document to give Stella context about what's
+happening with the absent AM's accounts. You can either paste notes directly
+into the modal, or link a Google Doc (it must be shared with your SiriusXM
+Google account). Stella reads the document server-side and uses it when
+answering questions — no copy/paste into chat required.
+
+While you're covering:
+- Stella's answers are grounded in the covered AM's campaign data
+- She references their campaigns by name and flags issues specific to
+  their book, not yours
+- Any edits, saves, or deletes you make go directly into the covered
+  AM's campaign database tab
+- The coverage document context is session-only — nothing is saved after
+  you exit or close the tab
+
+
+── PHASE 1 — The Beginning ─────────────────────────────────────────────────
+
+Started as a single-purpose billing review tool. You could paste billing
+data into a text box and chat with an AI about it. That's it — but it
+proved the core idea worked: an AI that understands SXM's billing context
+and can answer specific questions about your data.
+
+
+── PHASE 2 — Stella Is Born ────────────────────────────────────────────────
+
+The billing tool grew into a full operating partner. This is when Stella
+got her name, her personality, and her purpose.
+
+Key additions:
+- Stella knows your campaigns automatically — no need to paste data every
+  time. She reads your campaign database and uses it to answer questions.
+- The Billing Knowledge Base was wired in — Stella understands IO approval,
+  OMS setup, billing close, make-goods, 3P reporting, and escalation paths.
+- Every AM gets their own tab in a shared Google Sheet, created automatically
+  on first login. No setup required.
+
+
+── PHASE 3 — Campaign Management ───────────────────────────────────────────
+
+Stella became your campaign dashboard, not just a chat window.
+
+- Add, edit, and delete campaigns through a form (21 fields covering
+  everything from Slingshot IDs to IO Case URLs).
+- Campaign cards with color-coded status badges and pacing bars that turn
+  red when a campaign is under 80%.
+- Campaign detail view: all your platform links in one place (Slingshot,
+  OMS, ARIA, Salesforce, IO Case, DAM folder, Castle), plus all your
+  tickets auto-linked to JIRA.
+- Flight warnings: Stella alerts you 7 days before a flight ends.
+- Inline Stella chat on every campaign detail — she already knows the
+  campaign you're looking at when you ask her something.
+
+
+── PHASE 4 — Home Dashboard & Settings ────────────────────────────────────
+
+A real home base to start your day from.
+
+- Dashboard with five widgets: Campaign Calendar, Pending Tasks, Meetings
+  (placeholder), Quick Links, and the Stella Runner mini-game.
+- Dark mode, accent color choices, and archive settings all saved per device.
+- Widget toggles — show or hide whatever you don't need.
+
+
+── PHASE 5 & 6 — Virtual Office ────────────────────────────────────────────
+
+Six agent desks representing Stella's full vision: Billing, Stella,
+Trafficking, Reporting, Handoff, and Tagging.
+
+- Stella's desk is live — click it to open a full chat session.
+- The other agents show what's coming and why.
+- Two views: a polished card layout and a pixel-art office scene where
+  Stella appears as the SXM dog mascot. Toggle between them.
+
+
+── PHASE 7 — Dashboard Redesign ────────────────────────────────────────────
+
+The dashboard got a complete overhaul.
+
+- Drag-and-drop widget reorder — arrange your dashboard however you want,
+  and it stays that way.
+- Each widget has a close button to hide it without going to Settings.
+- Campaign Calendar redesigned as a Gantt chart (today ±90 days) with
+  color-coded bars. Toggle to a compact sortable list view.
+- Quick Links upgraded: added Ads Manager, The Hub, and 7 CS Hub tools
+  (Ratecard, Podcast Explorer, Audience Discovery, etc.). Show or hide
+  any individual link with the gear button.
+
+
+── PHASE 8 — Campaign Management Upgrades ──────────────────────────────────
+
+More power, less manual work.
+
+- Structured flight date picker: add individual flight start/end date pairs
+  instead of typing free text. Past entries auto-convert.
+- 1P Billing and 3P Billing checkboxes added to every campaign.
+- List view added to campaigns — toggle between card grid and sortable table.
+- Seller view: share a read-only link with your sellers so they can see
+  your campaigns without edit access. "Copy Seller Link" button in the sidebar.
+- Auto schema migration: new fields added to your Sheet tab automatically —
+  no manual spreadsheet work ever needed.
+
+
+── PHASE 9 & 10 — Inline Editing & Resources ──────────────────────────────
+
+Faster edits and a one-stop hub for your tools.
+
+- Per-section inline editing on campaign detail: update just pacing, or
+  just platform IDs, or just tickets — without opening the full modal.
+- Resources tab: all your Quick Links, CS Tools, and custom resources in
+  one browseable page. Add your own links with a custom label, URL, icon,
+  and color. Edit or delete them anytime.
+
+
+── PHASE 11 — Morning Briefing & Dashboard Upgrades ───────────────────────
+
+Stella starts proactively watching your campaigns.
+
+- Daily morning briefing: once per day when you open Stella, she reads
+  your campaign data and writes a personalized health check in her own
+  voice. Flights ending soon, low pacing, live campaigns without traffic
+  tickets — she surfaces it all so you don't have to go looking.
+- Campaign Activity widget: a notification feed of live alerts. Click any
+  alert to see a quick-links popup for that campaign. Dismiss alerts
+  individually or all at once.
+- To-Do widget: a personal task list with optional due dates and campaign
+  tie-ins. Completed items can auto-archive after a set number of days.
+- Seller link reliability fix: the shared seller URL now survives Google's
+  auth redirect reliably.
+
+
+── PHASE 12 — Onboarding & Guided Tour ────────────────────────────────────
+
+A proper welcome for new users.
+
+- On first login, Stella asks what to call you. Your name is used in every
+  greeting and briefing from that point on.
+- A 6-step guided tour walks you through every section with a spotlight
+  and tooltip explaining what's live and what's coming.
+- The tour is restartable from Settings, useful for demos or onboarding
+  new team members.
+
+
+── PHASE 13 — Column Customization & Bug Fixes ────────────────────────────
+
+Make the campaign list view your own.
+
+- Add, remove, reorder, and resize columns in list view. All 20 campaign
+  fields are available as columns — including Salesforce, IO Case, Castle,
+  DAM Folder, tickets, billing flags, and more. Link columns open directly
+  in a new tab.
+- Fixed a bug where clicking into campaigns or hitting Edit in list view
+  was broken when campaign names or notes contained special characters.
+- What's New popup: auto-shows when there's a new build, and always
+  accessible from the sidebar so you can catch up on what changed.
+
+
+── PHASE 14 — Outlook Calendar Integration ────────────────────────────────
+
+Your Meetings widget is now live.
+
+- Connect your Outlook calendar by running /refresh-stella-calendar in
+  Claude Code. It fetches your next 7 days of meetings and pushes them
+  to Stella.
+- The Meetings widget groups events by day (Today, Tomorrow, then by date)
+  and shows time, meeting name, and location for each event.
+- The footer shows how long ago you last synced, so you always know if
+  it's current. Re-run the command anytime to refresh.
+
+
+── PHASE 15 — Team Views, Roles & Seller Login ────────────────────────────
+
+Stella now works for your whole team, not just individual AMs.
+
+On first login, Stella asks your role:
+
+  Account Manager
+  Your experience is unchanged. Everything works exactly as before.
+
+  Team Lead / Manager
+  Enter your AMs' email addresses once during setup (or anytime from
+  Settings). From then on:
+  - Your Campaigns page shows all team campaigns in one view, labeled
+    by AM. Filter down to a specific rep with the AM dropdown.
+  - Open any campaign and edit it — same full access as any AM.
+  - Stella's morning briefing covers your whole team: she names specific
+    AMs when flagging low pacing, ending flights, or untrafficked campaigns.
+  - Ask Stella anything about the team: pacing health, billing status,
+    incremental revenue opportunities. She has context on every campaign
+    across your roster.
+
+  Seller
+  Log in with your SXM Google account — no special link needed. Stella
+  automatically finds all campaigns where your name appears in the Sales
+  Rep field, across all AMs on the platform. You'll see which AM owns each
+  campaign, but can't edit anything.
+
+
+── PHASE 16 — 3P Pacing Sheets ────────────────────────────────────────────
+
+Track third-party delivery campaign by campaign, directly inside Stella.
+
+The Pacing tab now has three sub-tabs: 3P (live), 1P, and Programmatic
+(both coming in future phases).
+
+For the 3P tab, you can create a pacing sheet for any campaign in your
+database. The sheet is organized by flight — each flight period becomes a
+collapsible section header showing the start and end dates, total days,
+days remaining, and expected pacing percentage at the current point in time.
+
+Under each flight you add placement rows. The fields you enter are:
+
+  LID, Placement name, Goal impressions, Ad Server, 1P to Date, 3P to Date, Notes
+
+Everything else calculates automatically:
+
+  Expected to Date — how many impressions should have delivered by today
+  DFP % to Goal    — 1P delivery as a percentage of the goal
+  3P % to Goal     — 3P delivery as a percentage of the goal
+  Expected %       — how far through the flight you are today
+  DFP Remaining    — impressions still needed to hit goal
+  Discrepancy      — difference between 1P and 3P delivery
+
+Pacing percentages are color-coded green, amber, or red relative to where
+you should be in the flight.
+
+Editing works like a spreadsheet: click any editable cell, type the value,
+and it saves automatically when you click away. The Last Updated date
+auto-stamps whenever you update a 1P or 3P delivery number.
+
+When creating a new pacing sheet (or adding a flight), Stella checks whether
+your campaign already has structured flight dates. If it does, those dates
+appear as one-click chips so you can fill in the start and end without
+typing. You can also enter any custom date range manually.
+
+A "3P Pacing" button on every campaign detail view takes you straight to
+that campaign's sheet without going through the Pacing tab manually.
+
+Pacing data is stored in the existing campaign database — no extra Sheet
+tabs, no new files. It scales cleanly regardless of how many AMs are using
+Stella.
+
+
+===========================================================================
+For technical implementation details, see CHANGELOG.txt.
+For upcoming features, see ROADMAP.txt.

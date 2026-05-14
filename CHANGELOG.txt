@@ -1,0 +1,607 @@
+STELLA AI — CHANGE LOG
+SiriusXM Client Services AI Operating Partner
+===========================================================================
+Last updated: 2026-05-07
+
+
+── PHASE 17: OOO COVERAGE ────────────────────────────────────────────────
+
+Allows any AM to temporarily load a colleague's campaigns with full
+read/write access, with Stella aware of the coverage context.
+
+Stella.gs
+  - buildCoverageStellaSystemContent(userMessage, coveredEmail, coverageDoc):
+    New system prompt variant for coverage mode. Loads covered AM's campaigns
+    via getCampaignContext(coveredEmail). Injects coverage notes/doc as
+    "--- COVERAGE NOTES ---" section. Adds identity context block telling
+    Stella who is being covered and in what capacity.
+  - readGoogleDoc(url): Reads Google Doc text via DocumentApp.openByUrl().
+    Throws descriptive error if Doc is not accessible.
+
+Index.html (STELLA_VERSION → "17")
+  CSS
+  - .coverage-banner: amber (#b45309) sticky banner, flex layout with
+    exit button.
+  - .coverage-banner-exit: semi-transparent button inside banner.
+  - .cov-doc-tabs / .cov-doc-tab: two-button tab switcher for
+    Google Doc URL vs. paste content.
+
+  HTML
+  - navCoverage: "Cover for AM" nav item added to sidebar (hidden in seller
+    mode alongside other AM-only nav items).
+  - coverageModal: full coverage entry modal — AM email input, optional
+    coverage doc section (Google Doc link or paste), Load Campaigns button.
+
+  JS globals
+  - _coverageMode (bool), _coveredEmail (string), _coverageDocText (string),
+    _covDocTabMode (string): session-only coverage state, not persisted.
+
+  JS functions
+  - _getCampaignEmail(): returns _coveredEmail in coverage mode, else
+    currentUser.email. Used in all saveCampaign / deleteCampaign calls.
+  - openCoverageModal() / closeCoverageModal(): show/hide coverage modal.
+  - switchCovDocTab(tab): toggle between URL and paste doc input.
+  - startCoverage(): validates email, optionally reads Google Doc via GAS,
+    then calls _finalize() to set coverage state and enter coverage mode.
+  - _enterCoverageMode(): updates campaigns title and back-button text,
+    calls loadCampaigns() (which short-circuits to _coverageLoadCampaigns),
+    navigates to campaigns view.
+  - _showCoverageBanner(covName) / _removeCoverageBanner(): insert/remove
+    amber coverage banner at top of campaigns view.
+  - _coverageLoadCampaigns(): loads covered AM's campaigns via
+    getCampaigns(_coveredEmail); populates allCampaigns, refreshes views.
+  - exitCoverage(): clears all coverage state, removes banner, restores
+    title and back-button text, reloads own campaigns.
+
+  Modified functions
+  - loadCampaigns(): early-exit to _coverageLoadCampaigns when _coverageMode.
+  - sendChat(): checks _coverageMode first; calls
+    buildCoverageStellaSystemContent with _coveredEmail and combined
+    supplement (coverage doc + any campaign context hint).
+  - saveCampaignForm(), confirmDelete(), saveDetailSection(),
+    _savePacing3P(): all now call _getCampaignEmail() instead of
+    currentUser.email so edits land on the correct AM's tab in coverage mode.
+
+  WHATS_NEW: Phase 17 entry prepended.
+
+
+── PHASE 1: BILLING REVIEW AGENT (standalone prototype) ──────────────────
+
+Initial build — standalone single-purpose billing review chat tool.
+Files: Billing Agent/Index.html + Code.gs
+
+  - Two-panel layout: left = billing data paste area, right = chat
+  - "Load Context" button sends pasted data as system context to the AI
+  - Browser-side LiteLLM fetch pattern established (reaches internal
+    litellm.siriusxm.com without going through GAS servers)
+  - Typing indicator (bouncing dots), conversation history (10-turn rolling),
+    user/agent message bubbles, error handling for 429/401/network failures
+  - Clear All button resets context and chat
+  - SXM brand colors (--sxm-blue: #003087, --sxm-sky: #0099d8)
+
+
+── PHASE 2: STELLA — CORE ARCHITECTURE ──────────────────────────────────
+
+Promoted from billing-only tool to full AI operating partner.
+New files: Stella.gs, StellaDB.gs, BillingKB.gs, Stella/Index.html
+
+Backend (Stella.gs)
+  - STELLA_IDENTITY: Stella's personality, capabilities, and constraints
+  - STELLA_KB_ROUTER: keyword-to-domain mapping for dynamic KB injection
+  - buildStellaSystemContent(): assembles full system prompt server-side
+    (identity + live campaign context + relevant KB + pasted data)
+  - getCurrentUser(): derives display name and initials from SXM email
+  - doGet(): serves the HTML template with injected LiteLLM credentials
+  - testStellaConfig(): manual config verification utility
+
+Database (StellaDB.gs)
+  - One Google Sheet, one tab per AM (keyed to SXM email prefix)
+  - setupStella(): one-time initialization, creates sheet + index tab
+  - 21 columns (A–U): Opportunity Name, Slingshot ID, OMS ID, Sales Rep,
+    Start Date, End Date, Campaign Status, Flight Status, Pacing %,
+    Traffic Ticket, Reporting Ticket, Misc Ticket, Campaign Notes,
+    Last Updated, Salesforce URL, IO Case URL, Launch Date,
+    Additional Tickets, Flight Notes, DAM Folder URL, Ad Ops Castle URL
+  - getCampaigns(), saveCampaign(), deleteCampaign()
+  - getCampaignStats(): live/ending-soon/at-risk counts for header
+  - getCampaignContext(): compact campaign text injected into system prompt
+
+Knowledge Base (BillingKB.gs)
+  - getRelevantKB(): keyword-matched billing workflow content
+  - Covers: IO approval, OMS setup, billing close, CBS/custom billing,
+    make-good/credit, 3P reporting, discrepancy review, prepay/prepayment
+
+Frontend (Index.html — single-file GAS HtmlService template)
+  - Full SPA: Navigation, Home/Dashboard, Campaigns, Detail, Reports,
+    Virtual Office, Settings
+  - CSS custom properties: dark/light theming, accent color swatches
+  - Stella icon: embedded base64 JPEG (dog mascot)
+
+
+── PHASE 3: CAMPAIGN MANAGEMENT ─────────────────────────────────────────
+
+  - Campaign card grid view with filter bar (ALL / LIVE / UPCOMING /
+    ENDING SOON / ENDED)
+  - Status badges with color coding (live=green, upcoming=blue,
+    ending-soon=amber, ended=gray)
+  - Pacing % bar with at-risk visual (red < 80%)
+  - Add/Edit modal: all 21 DB fields, date pickers, status dropdowns,
+    Flight Status dropdown (LIVE / TRAFFICKED / PENDING / ENDED / DIF)
+  - Delete campaign with confirmation dialog
+  - Campaign Detail view:
+    - Left panel: Overview card, Pacing card, Platforms card (auto-linked
+      Slingshot, OMS, ARIA, SF, IO Case, DAM folder, Ad Ops Castle)
+    - Ticket section: auto-linked JIRA/Theorem URLs (THRM-######)
+    - Flight warning: alerts when a flight ends within 7 days
+    - Campaign notes display
+    - Right panel: Stella inline chat pre-loaded with campaign context
+  - Stella popup chat (bottom-right button, slides up from nav)
+  - Flight date parser: detects M/D–M/D ranges in Flight Notes field
+
+
+── PHASE 4: SETTINGS & DASHBOARD WIDGETS ────────────────────────────────
+
+  - Settings page:
+    - Dark mode toggle (persisted to localStorage)
+    - Accent color swatches (6 options)
+    - Default campaign filter selector
+    - Archive setting (never / 90 days / 1 year)
+    - Widget on/off toggles for each dashboard widget
+  - Home dashboard with widget grid (auto-fill, 310px min column width)
+  - Initial widgets:
+    - Campaign Calendar (monthly grid, highlights days with active campaigns)
+    - Pending Tasks (flight warnings, low pacing alerts, ending-soon,
+      upcoming with no launch date — sorted by urgency)
+    - Meetings (Outlook Calendar placeholder — "Coming Soon")
+    - Quick Links (Slack #fyi-all, JIRA, Slingshot, ARIA)
+    - Stella Runner game (endless runner canvas game, Space/tap to jump,
+      high score persisted to localStorage)
+  - applyStoredSettings(): flash-free theme/accent restore on load
+  - STELLA_ICON embedded base64 shown in header, nav avatar, office
+
+
+── PHASE 5: VIRTUAL OFFICE — CSS CARD VIEW ──────────────────────────────
+
+  - Six agent desks rendered as CSS cards in a grid:
+    Billing Agent, Stella (center), Trafficking Agent,
+    Reporting Agent, Handoff Agent, Tagging Agent
+  - Each desk: monitor, keyboard, name badge, status dot, avatar
+  - Clicking a desk opens a side panel with:
+    - Agent greeting (Stella: live campaign count)
+    - Roadmap note for unbuilt agents
+    - Full chat interface (same LiteLLM pattern)
+  - office-panel slide-in animation, close button, input bar
+
+
+── PHASE 6: VIRTUAL OFFICE — PIXEL ART CANVAS ───────────────────────────
+
+  - HTML5 canvas added alongside CSS card view (720×460 internal resolution)
+  - imageSmoothingEnabled = false for crisp pixel-art aesthetic
+  - drawOfficeScene(): wall with bookshelves, wooden floor planks, two
+    potted plants, six desks drawn procedurally with fillRect
+  - offDrawDesk(): chair, selection glow, desk surface (wood tones),
+    monitor (agent accent color), keyboard, mug, active indicator dot
+  - offDrawChar(): Stella = dog sprite (floppy ears, snout, tail, gleam);
+    others = human figure (agent-colored shirt, skin, hair, shoes)
+  - Dark mode: palette switches on theme change (redrawOffice())
+  - Click detection: scale-compensated for responsive CSS resizing
+    (getBoundingClientRect + OFF_W / rect.width ratio)
+  - Clicking a desk opens the same side panel as card view
+  - Toggle pill ("🎮 Pixel Art / 🗂️ Cards") to switch between views
+  - View preference saved to localStorage ("officeView")
+  - Card view fully preserved and restored; both views share the
+    same office-panel side chat
+
+
+── PHASE 7: DASHBOARD REDESIGN ──────────────────────────────────────────
+
+Widget infrastructure
+  - buildWidgetHead(title, wId, extraHtml): standardized header with
+    drag handle (⠿) and close button (✕) on every widget
+  - buildWidgetCard(wId, title, headExtra, bodyHtml, extraClass, afterHead):
+    full widget wrapper with drag-and-drop event handlers
+  - closeWidget(wId): hides widget inline, syncs with Settings toggles
+  - renderHome() now iterates getWidgetOrder() for ordered, DnD-aware render
+
+Drag-and-drop widget reorder
+  - HTML5 Drag API: draggable="true" on each widget's drag handle
+  - widgetDragStart/End/Over/Leave/Drop(): reorder logic
+  - Drop target gets blue border highlight during drag
+  - Dragged widget dims to 35% opacity
+  - Order saved to localStorage ("widget_order") and respected on reload
+  - getWidgetOrder(): merges saved order with WIDGET_DEFS so new widgets
+    added in future automatically append to the end
+
+Campaign Calendar widget (full redesign)
+  - Default view: Gantt chart (rolling 6 months: today ±90 days)
+    - Sticky campaign name column (left: 130px, position: sticky)
+    - Proportional month header segments
+    - Color-coded bars: LIVE=green, UPCOMING=blue, ENDING SOON=amber
+    - Red "today" marker line
+    - Campaigns with no dates omit the bar (name still shown)
+    - Click any bar or name to jump to campaign detail view
+  - Toggle: List view — compact sortable table
+    - Columns: Campaign, Status, Start, End, Pacing%, Rep
+    - Click any column header to sort asc/desc (↑/↓ indicator)
+    - Sort preference persisted to localStorage
+    - Campaign name is clickable link to detail view
+  - View toggle buttons (📊 Gantt / ☰ List) in widget header
+  - openDetailById(id): looks up campaign by Slingshot ID or name
+
+Quick Links widget (full redesign)
+  - Updated links:
+    - Ads Manager (pandora-ads.savagebeast.com — replaces Slingshot)
+    - #fyi-all Slack (new join URL)
+    - The Hub (hub.docker.savagebeast.com — replaces JIRA)
+    - ARIA (unchanged)
+  - Added "Top CS Tools" scrollable section (7 tools, all Hub links):
+    1. Ratecard
+    2. Podcast Explorer
+    3. Audience Discovery
+    4. Agency Ratecard
+    5. Vendor Matrix
+    6. Specs Generator
+    7. CS One Resource
+  - ⚙ gear button on widget header → inline dropdown checklist
+    to show/hide any individual link or tool
+  - Hidden link IDs persisted to localStorage ("hidden_links")
+  - Gear dropdown closes on click-outside
+
+Pending Tasks widget
+  - Updated to use new buildWidgetCard() infrastructure
+  - Badge count in header unchanged
+
+Meetings & Stella Runner widgets
+  - Updated to use new buildWidgetCard() infrastructure
+  - Functionality unchanged
+
+
+── PHASE 8: CAMPAIGN MANAGEMENT UPGRADE ─────────────────────────────────
+
+StellaDB.gs
+  - DB_COLUMNS expanded: added "1P Billing" (col V) and "3P Billing" (col W)
+  - migrateAMTab(email): auto-detects columns missing from an existing AM
+    tab and appends them with matching header styling. Called in getCampaigns()
+    so migration runs silently on every load.
+
+Stella.gs
+  - doGet() → doGet(e): reads URL parameters for seller view.
+    t.sellerMode = "true"/"false" | t.sellerAM = email string.
+    Parameters: ?seller=1&am=first.last@siriusxm.com
+
+Index.html
+  - Seller mode: SELLER_MODE / SELLER_AM template vars injected by doGet(e).
+    Read-only banner, no edit/delete/add controls, no Stella AI chat.
+    Loads specified AM's campaigns directly. "Copy Seller Link" button
+    in sidebar footer (AM mode only).
+  - Campaigns list view: 🗂️ Cards / ☰ List toggle in campaigns header.
+    List renders as a sortable table (6 columns, click header to sort ↑↓).
+    Sort key and direction persisted to localStorage ("camp_list_sort",
+    "camp_list_sort_asc"). View mode persisted ("camp_view").
+  - Structured flight date picker: replaces free-text Flight Notes textarea.
+    Add-flight row (start date + end date + ＋ button), removable flight
+    chips. Saved as JSON array [{"start":"YYYY-MM-DD","end":"YYYY-MM-DD"}].
+    parseFlightDates() tries JSON.parse first, falls back to legacy regex.
+    Legacy text in existing campaigns auto-converted on modal open.
+    Detail view renders each flight as "start → end" line.
+  - 1P Billing / 3P Billing checkboxes added to modal (Billing & Notes
+    section). Shown in detail view when checked. Saved as boolean.
+  - Pacing nav item added above Reports (placeholder — Coming Soon view).
+  - Spacebar bug fixed: gameKeydown() now skips preventDefault when
+    document.activeElement is INPUT, TEXTAREA, or SELECT.
+  - renderDetail() hides Stella chat panel when SELLER_MODE is true.
+  - buildCard() hides Edit/Delete buttons when SELLER_MODE is true.
+
+ROADMAP.txt
+  - Item 1 (Structured Flight Data) updated: Phase 1 shipped, notes
+    Phase 2 as per-flight format/impression goal enrichment.
+  - "What's Been Built" section updated to reflect all new features.
+  - Date bumped to 2026-04-25.
+
+
+── PHASE 9: SECTION INLINE EDIT + RESOURCES TAB ─────────────────────────
+
+Index.html
+  - Per-section inline edit on campaign detail view:
+    - "✎ Edit" button on each detail card (hidden in seller mode).
+    - editDetailSection(section): replaces card body with a scoped inline
+      form. Four sections: pacing (single number field), overview (status
+      selects, rep, dates, billing checkboxes, notes), platforms (IDs and
+      URLs), tickets (traffic/reporting/misc/additional ticket fields).
+    - saveDetailSection(section): reads inline form, merges changed fields
+      into detailCampaign, calls saveCampaign via GAS, re-renders detail.
+    - Flights intentionally excluded from inline edit (full modal required);
+      a helper note is shown in the overview section form.
+  - Pacing card always shown (displays "Not set" when pacing = 0).
+  - Tickets card always shown (displays "No tickets yet" when all empty).
+
+  - Resources tab (sidebar, under Reports):
+    - showResources() / navResources / viewResources added.
+    - renderResources(): renders three sections as .res-card grids —
+        Quick Links (from QUICK_LINKS, respects hidden_links setting),
+        CS Tools (from CS_TOOLS, respects hidden_links setting),
+        My Resources (from localStorage stella_user_resources).
+    - Empty My Resources state shows helper text.
+    - "+ Add Resource" button (hidden in seller mode) opens Add Resource modal.
+    - Add Resource modal: label, URL, description, emoji icon, 8-color swatch
+      picker. Saved as {id, label, url, sub, icon, bg} in localStorage.
+    - deleteUserResource(id): remove button appears on hover for user cards.
+    - getUserResources() / setUserResources(): localStorage r/w helpers.
+    - openAddResourceModal() / closeAddResourceModal() / saveResource():
+      full modal lifecycle with validation (label + URL required).
+
+ROADMAP.txt
+  - "What's Been Built" updated: per-section inline edit, Resources tab.
+  - Item 19 added: Admin-controlled resource management (shared resources
+    stored in Sheet, admin role gate, personal resources on top).
+  - Date bumped to 2026-04-25.
+
+
+── PHASE 10: EDIT RESOURCES + ROADMAP INTEGRATIONS ──────────────────────
+
+Index.html
+  - Edit My Resources: user-added resource cards now show a pencil (✎) and
+    delete (✕) button on hover, side by side in a .res-actions overlay.
+  - openEditResourceModal(id): finds the resource by ID, pre-fills the Add
+    Resource modal with existing values, sets save button to "Save Changes".
+  - _openResourceModal(resource): shared setup for both add and edit modes.
+    _arEditId tracks whether the modal is in add (null) or edit (id) mode.
+  - saveResource(): checks _arEditId — updates in place if editing, appends
+    if adding. Preserves original ID on edit.
+  - CSS: .res-actions wrapper (flex, hidden until hover), .res-action-btn
+    base style, .res-action-btn.res-del for destructive red hover color.
+
+ROADMAP.txt
+  - New section: AM-Built GPT Integrations.
+  - Item 20: Trafficking Subagent — port from existing AM-built GPT.
+  - Item 21: Campaign Monitoring Subagent — port from GPT in progress.
+  - Item 22: Incremental Upsell Assistant — port from GPT in progress.
+  - Each item documents the target .gs KB file, trigger keywords to
+    uncomment in STELLA_KB_ROUTER, and the dependency (KB handoff from AM).
+
+── PHASE 11: SELLER LINK FIX + DASHBOARD UPGRADES ──────────────────────
+
+Seller link fix
+  - Root cause: GAS auth redirect strips ?query params for authenticated
+    users, so SELLER_AM arrived empty. Fix: encode seller params in both
+    the query string (?seller=1&am=...) AND the URL hash (#seller=1&am=...).
+  - Client-side IIFE after template var injection reads the hash and
+    overrides SELLER_MODE / SELLER_AM if hash contains seller params.
+  - copySellerLink() updated to write both ?params and #params in the URL.
+
+Campaign Activity widget (formerly Pending Tasks)
+  - Renamed "Pending Tasks" → "Campaign Activity" with notification-feed
+    UX. Each alert has a stable key ("type:slingshotId") and a per-item
+    clear button (✕). "Clear All" clears every item at once.
+  - Cleared keys stored in activity_cleared localStorage (capped at 200).
+  - Clicking any notification opens a quick-links popup for that campaign:
+    Slingshot, OMS, ARIA, Salesforce, IO Case, DAM Folder, Ad Ops Castle.
+    Popup includes "Open Campaign Detail →" button.
+
+To-Do widget
+  - New dashboard widget: text note + optional due date + optional campaign
+    tie-in. Checkbox marks done (strikethrough). Items persist in
+    stella_todos localStorage. Done items cleared manually or via
+    auto-archive setting.
+  - Auto-archive: _autoArchiveTodos() respects todo_archive_days setting;
+    filters done items older than the configured cutoff.
+  - Settings page: "Archive Completed To-Dos" select added (Never / 7 / 14 /
+    30 days), wired to saveSetting('todo_archive_days') and restored by
+    applyStoredSettings().
+
+Stella daily briefing (agentic morning check-in)
+  - Once per day (keyed to stella_last_briefing_date in localStorage),
+    computeDailyBriefing() runs after campaigns load. Computes: flight
+    warnings, low-pacing campaigns, live campaigns with no traffic ticket.
+  - Home dashboard: .briefing-banner appears above the widget grid showing
+    status chips and an "Open Chat ↗" button. Dismissable per session.
+  - Popup chat: _pendingBriefingMsg replaces the standard greeting on first
+    popup open that day. Message is pushed into popHistory so follow-up
+    questions have context.
+  - LLM-powered message: computeDailyBriefing() fires a live LiteLLM call
+    after setting the banner. The computed facts are passed as context to
+    buildStellaSystemContent(); Stella writes the popup greeting in her own
+    voice. Template fallback used if the call is still in-flight when the
+    popup opens, or if the API call errors.
+  - Briefing skipped in seller mode.
+
+── PHASE 12: ONBOARDING FLOW ─────────────────────────────────────────────
+
+Index.html
+  - checkOnboarding(): fires after currentUser loads (skipped in seller mode).
+    Checks stella_onboarding_done localStorage key; shows name modal if absent.
+  - Name capture modal: Stella icon, "What should I call you?", text input
+    pre-filled from email-derived first name. Enter key submits. Saves to
+    stella_nickname in localStorage.
+  - getDisplayName(): helper used throughout the app (renderHome, briefing,
+    togglePopup) — returns nickname if set, else email-derived first name.
+  - Intro modal: after name submit, modal transitions to "Nice to meet you"
+    with a brief Stella intro and two options: Take the Tour / Jump Right In.
+  - Guided tour (6 steps): spotlight + tooltip system. Each step:
+      1. Home Dashboard — widget overview, DnD layout
+      2. My Campaigns — CRUD, calendar/feed, detail view
+      3. Virtual Office — Stella live, other agents roadmap
+      4. Resources — pre-loaded tools, custom resource add
+      5. Settings — theme, colors, widgets
+      6. Stella CTA button — "I'm always here"
+    Tour navigates to the relevant view at each step. Spotlight uses
+    box-shadow: 0 0 0 9999px overlay technique. Tooltip positioned to the
+    right of the spotlight, flips left if near viewport edge.
+  - "Restart Tour" button added to Settings > Onboarding section for demos.
+  - resetOnboarding(): clears stella_onboarding_done + stella_nickname and
+    reloads. Accessible via Settings or console for testing.
+
+Agentic vision (roadmap — not yet built):
+  - True agentic briefing requires a backend server (Roadmap Item 16) so
+    Stella can run on a schedule, push alerts proactively, and reach out
+    without the user having to load the app first. Detailed in ROADMAP.txt
+    as Item 23. Added to STELLA_PRESENTATION.html as a vision slide.
+
+── PHASE 13: COLUMN CUSTOMIZATION + WHAT'S NEW ──────────────────────────
+
+Index.html
+  - Bug fix: replaced all JSON.stringify(c) in inline onclick attributes with
+    _campMap[c._row] lookup pattern. JSON in HTML attributes breaks when campaign
+    names/notes contain double quotes. All list view and card view buttons now
+    use safe integer row IDs. _campMap populated after every loadCampaigns() call.
+    Functions: _goDetail(row), _goEdit(row).
+
+  - ALL_LIST_COLS: 20 DB fields defined with type metadata (name, badge, pacing,
+    link, ticket, bool, notes, date, text). Default columns unchanged.
+  - getListColCfg() / saveListColCfg(): localStorage persistence under
+    stella_list_col_cfg. Merges saved config with ALL_LIST_COLS so new fields
+    always appear for existing users.
+  - renderCampaignsList() fully rewritten: uses getActiveCols(), builds
+    <colgroup> with per-column widths, renders each cell via renderColCell()
+    (link columns show 🔗 Open, ticket columns auto-link to JIRA, bool columns
+    show ✓). All onclick handlers use safe row IDs.
+  - Column resize: drag handle (col-resize-handle) on each <th> right border.
+    Widths persisted to stella_col_widths localStorage. _initColResize() called
+    after every render.
+  - Column picker modal (#colPickerModal): checkbox + drag-to-reorder list of
+    all 20 columns. "Opportunity Name" locked. "Apply" saves and re-renders.
+    "↺ Reset to defaults" clears saved config. Draggable rows via HTML5 Drag API.
+  - "⚙ Columns" button added to campaigns header (only visible in list view).
+    setCampView() toggles .visible class on the button.
+  - What's New modal (#whatsNewModal): shows phase-by-phase feature changelog.
+    Auto-opens once on new STELLA_VERSION ("13"). Blue dot on sidebar button
+    until dismissed. Re-openable via "✨ What's New" sidebar button anytime.
+    checkWhatsNew() called in getCurrentUser success handler.
+  - Both new modals close on backdrop click.
+
+── PHASE 14: OUTLOOK CALENDAR INTEGRATION (Claude Code Bridge) ───────────
+
+First-pass Meetings widget using a Claude Code skill as a sync bridge.
+The skill fetches events from Outlook via the outlook-calendar MCP plugin
+and POSTs them to Stella's new doPost() endpoint. Works for the AM running
+Claude Code; multi-AM solution deferred to Roadmap Item 26 (MSAL.js).
+
+Stella.gs
+  - doPost(e): new GAS endpoint. Accepts POST { secret, email, events }.
+    Validates CALENDAR_SYNC_SECRET Script Property before writing.
+    Returns { ok: true, saved: N } or { ok: false, error: "..." }.
+    Uses ContentService.MimeType.JSON response.
+
+StellaDB.gs
+  - _getOrCreateCalTab(email): returns or creates a hidden per-AM
+    [tabName]_cal tab in the DB sheet. Hidden on creation.
+  - saveCalendarEvents(email, events): writes events JSON array to A1,
+    ISO timestamp to A2.
+  - getCalendarEvents(email): reads A1 (events) + A2 (syncedAt), returns
+    { events: Array, syncedAt: string }. Safe on first call (no tab yet).
+
+Index.html
+  - _calEvents / _calSynced globals for calendar state.
+  - loadCalendarEvents(): calls getCalendarEvents() via google.script.run,
+    stores results, re-renders Meetings widget body in-place without full
+    home re-render.
+  - buildMeetingsBody(): renders based on state:
+      null = loading spinner
+      never synced + empty = "needs setup" placeholder with /refresh-stella-calendar instructions
+      synced + events = grouped by day (Today / Tomorrow / day name),
+        each event showing time range, subject, location.
+        All-day events labeled "All day". Sync footer shows relative
+        time since last sync.
+  - buildMeetingsWidget(): now just calls buildWidgetCard + buildMeetingsBody().
+  - _esc() / _relTime() helpers added for meeting card rendering.
+  - loadCalendarEvents() called in getCurrentUser success handler.
+  - New CSS: .mtg-day-header, .mtg-event, .mtg-time, .mtg-info,
+    .mtg-subject, .mtg-loc, .mtg-sync-row, .mtg-empty, .mtg-loading.
+
+~/.claude/commands/refresh-stella-calendar.md
+  - New Claude Code skill file.
+  - Reads STELLA_GAS_URL + STELLA_CALENDAR_SECRET env vars.
+  - Instructs Claude to fetch next-7-days events from the outlook-calendar
+    MCP plugin, format them to Stella's schema, POST to GAS endpoint,
+    and report sync result. Includes one-time setup instructions.
+
+ROADMAP.txt
+  - Added Item 26: Outlook Calendar MSAL.js multi-AM integration.
+    Describes the MSAL.js/Azure AD approach for always-on calendar sync
+    for all AMs without needing Claude Code.
+
+── PHASE 15: ROLE-BASED ACCESS — AM / MANAGER / SELLER ──────────────────
+
+StellaDB.gs
+  - _getOrCreateTeamsTab(): hidden _teams tab (Manager Email | AM Emails JSON | Updated)
+  - saveManagerTeam(email, amEmails): upsert row in _teams tab
+  - getManagerTeam(email): returns { amEmails: [] } for a manager
+  - getTeamCampaigns(email): reads each AM's tab, attaches _am + _amEmail to every
+    campaign, returns flat sorted array
+  - getCampaignsForSeller(sellerDisplayName): reads _index tab for all registered AMs,
+    filters by Sales Rep field match (case-insensitive), attaches _am field
+  - getTeamCampaignContext(email): like getCampaignContext() but grouped by AM name
+
+Stella.gs
+  - buildManagerStellaSystemContent(userMessage, managerEmail, billingData): team-aware
+    system prompt using getTeamCampaignContext(). Includes context header telling Stella
+    it's advising a team lead. KB routing unchanged.
+
+Index.html
+  - _userRole global (localStorage "stella_role"): "am" | "manager" | "seller"
+  - _activeAmFilter global for AM picker state
+  - loadCampaigns() routes by role: getTeamCampaigns / getCampaignsForSeller / getCampaigns
+  - _deriveDisplayName(email): email prefix → display name (reused in seller matching)
+  - Onboarding: intro step now leads to _showOnbRoleStep() (AM / Team Lead / Seller buttons).
+    Manager role triggers _showOnbTeamStep() (textarea for AM emails, saved to Sheet + localStorage).
+    All paths converge at _showOnbTourStep() before the tour offer.
+  - resetOnboarding() now clears stella_role so re-onboarding re-prompts role.
+  - SELLER_MODE set from role at getCurrentUser resolution (role-based sellers get same
+    read-only guards as URL-param sellers). Add Campaign button hidden for sellers.
+  - ALL_LIST_COLS: _am column added (teamOnly:true). getActiveCols() auto-includes it
+    when campaigns have _am field; excludes it for AM view.
+  - _buildAmFilterHtml() / setAmFilter(): AM picker dropdown rendered above grid and list
+    when team/seller data is present. _getAmFilteredList() applies both status + AM filter.
+  - amFilterBar div added to campaigns page HTML.
+  - Campaigns page title changes to "Team Campaigns" for managers.
+  - detail-am-badge: "👤 AM: [name]" shown at top of campaign detail view when _am present.
+  - Stella prompt routing: managers use buildManagerStellaSystemContent() for popup chat
+    and morning briefing; detail chat always uses standard context (campaign-specific).
+  - Morning briefing: team-aware prompt for managers names AMs when flagging issues.
+  - Settings: "My Team" card (manager only) lists current team emails, "Edit Team" button
+    opens teamEditorModal. Save calls saveManagerTeam() and reloads campaigns.
+  - teamEditorModal added (one email per line textarea).
+  - _initTeamSettings() called in renderSettingsPage().
+  - STELLA_VERSION bumped to "15".
+  - What's New updated to user-facing bullet points covering Phase 14-15 features.
+
+── PHASE 16: 3P PACING SHEETS ────────────────────────────────────────────
+
+StellaDB.gs
+  - DB_COLUMNS: added "3P Pacing" (col X) — JSON blob storing per-campaign
+    3P pacing data {flights:[{id,start,end,rows:[...]}]}. migrateAMTab()
+    adds the column silently on next load for existing users.
+
+Index.html
+  - Pacing tab upgraded from Coming Soon placeholder to full pacing view.
+  - Sub-tabs: 3P (live), 1P and Programmatic (Coming Soon stubs).
+  - Campaign picker dropdown at top of 3P view.
+  - Per-campaign 3P pacing sheet, organized by flight (start→end date).
+  - Flights can be imported from the campaign's existing structured flight
+    dates, or entered manually via the Add Flight modal.
+  - Each flight section contains a scrollable placement table:
+    LID, Placement, Goal, Ad Server, 1P to Date, 3P to Date, Notes (editable);
+    Expected to Date, DFP %, 3P %, Expected %, DFP Remaining, Discrepancy (calculated).
+  - Spreadsheet-style inline editing: click any editable cell, type, blur to save.
+    lastUpdated timestamp auto-set on 1P/3P delivery changes.
+  - Add/remove placement rows per flight; add/remove flights.
+  - "3P Pacing" button added to campaign detail topbar (hidden in seller mode).
+    Opens the Pacing tab pre-loaded with that campaign.
+  - showPacingFromDetail() navigates to pacing view with detailCampaign pre-selected.
+  - STELLA_VERSION bumped to "16".
+  - What's New updated with Phase 16 feature bullets.
+
+── FILES ─────────────────────────────────────────────────────────────────
+
+  Index.html          Main app — CSS + HTML + JS (single-file GAS template)
+  Stella.gs           Orchestrator backend (system prompt builder, KB router, doPost)
+  StellaDB.gs         Campaign data layer (Google Sheets, per-AM tabs, calendar tabs, teams tab)
+  BillingKB.gs        Billing workflow knowledge base
+  ROADMAP.txt         Deferred features and future integrations
+  CHANGELOG.txt       This file
+  ~/.claude/commands/refresh-stella-calendar.md   Claude Code sync skill
+
+
+===========================================================================
+To add a new entry: append to the bottom of the relevant phase section,
+or start a new phase block. Keep entries short and specific.

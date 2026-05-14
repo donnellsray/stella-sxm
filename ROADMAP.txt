@@ -1,0 +1,425 @@
+STELLA AI — PRODUCT ROADMAP
+SiriusXM Client Services AI Operating Partner
+Last updated: 2026-05-06
+===========================================================================
+
+
+── WHAT'S BEEN BUILT ───────────────────────────────────────────────────
+
+Stella is a fully functional web app deployed via Google Apps Script,
+accessible to any SXM AM through their Google account. No installation
+required — just a URL.
+
+  CAMPAIGN DATABASE
+  - Each AM gets their own tab in a shared Google Sheet (auto-created
+    on first login). Stores 23 fields per campaign: opportunity name,
+    Slingshot/OMS IDs, sales rep, dates, statuses, pacing, tickets,
+    notes, direct links to Salesforce, DAM folder, Ad Ops Castle, and
+    1P/3P billing checkboxes.
+  - Add, edit, and delete campaigns through a modal form.
+  - Campaign status tracking: UPCOMING / LIVE / ENDING SOON / ENDED.
+  - Flight status tracking: LIVE / TRAFFICKED / PENDING / ENDED / DIF.
+  - Structured flight date picker: add/remove individual start+end date
+    pairs per flight. Stored as JSON; legacy text format auto-converted.
+  - 1P Billing / 3P Billing checkboxes per campaign.
+  - Auto schema migration: new columns added to existing AM tabs on load.
+
+  AI ASSISTANT (STELLA)
+  - Powered by Claude via LiteLLM (internal SXM endpoint).
+  - Available as a popup chat from any screen, and as an inline
+    assistant on each campaign's detail view.
+  - Stella's responses are grounded in the AM's live campaign data —
+    she knows names, dates, pacing, rep, and ticket IDs automatically.
+  - Dynamic knowledge base routing: billing-related questions pull in
+    the full Billing Workflow KB automatically.
+  - Billing KB covers: IO approval, OMS setup, billing close, CBS/custom
+    billing, make-goods/credits, 3P reporting, discrepancy review,
+    prepay, and escalation paths.
+
+  CAMPAIGN MANAGEMENT
+  - Card grid AND sortable list view — toggle between the two.
+    Both views share the same filter bar and persist preference.
+  - Campaign detail view: pacing bar, platform links (Slingshot, OMS,
+    ARIA, Salesforce, IO Case, DAM folder, Ad Ops Castle), all tickets
+    (auto-linked to JIRA/Theorem), structured flight dates, 1P/3P
+    billing flags, flight warnings (alerts 7 days before a flight ends),
+    and inline Stella chat pre-loaded with campaign context.
+  - Role-based access: users select AM, Manager, or Seller at first login.
+    Managers see all team campaigns in one view (filterable by AM), can
+    edit any campaign, and get team-level Stella awareness. Sellers log in
+    with their SXM Google account and auto-see campaigns where their name
+    appears in the Sales Rep field (matched from email prefix) — read-only.
+  - Legacy seller link (?seller=1&am=email) still supported for backwards
+    compatibility. New flow does not require separate links.
+  - Manager "My Team" settings section: add/remove AM emails, synced to
+    the _teams tab in the DB sheet.
+  - Per-section inline edit on campaign detail view: each card (Overview,
+    Pacing, Platforms, Tickets) has a "✎ Edit" button that replaces just
+    that card body with an inline form so AMs can update one field (e.g.
+    pacing) without opening the full 21-field modal.
+
+  RESOURCES TAB
+  - Dedicated sidebar page listing all Quick Links, CS Tools, and user-
+    defined custom resources in a browseable card grid.
+  - "+ Add Resource" button opens a modal (label, URL, description, emoji
+    icon, color swatch picker). Custom resources saved to localStorage.
+
+  HOME DASHBOARD
+  - Seven customizable widgets:
+      Campaign Calendar — Gantt chart view (today ±90 days) with
+        color-coded bars per status and a toggle to compact sortable
+        table view. Click any bar to open the campaign detail.
+      Campaign Activity — Notification feed: flight warnings, low-pacing
+        alerts (<80%), untrafficked live campaigns. Per-item clear button
+        and "Clear All". Click any alert for a campaign quick-links popup
+        (Slingshot, OMS, ARIA, SF, IO Case, DAM, Castle).
+      To-Do — Personal task list. Text + optional due date + optional
+        campaign tie-in. Checkbox marks done (strikethrough). Auto-archive
+        setting (Never / 7 / 14 / 30 days).
+      Quick Links — Ads Manager, #fyi-all Slack, The Hub, ARIA,
+        CenterStage. Per-link show/hide via gear icon.
+      CS Tools — Ratecard, Podcast Explorer, Audience Discovery,
+        Agency Ratecard, Vendor Matrix, Specs Generator, CS One
+        Resource. Per-tool show/hide via gear icon.
+      Meetings — Placeholder (Outlook integration on roadmap).
+      Stella Runner — Pixel art endless runner mini-game.
+  - Drag-and-drop widget reorder (order saved per user).
+  - Each widget has a close button (✕) to hide without going to Settings.
+  - Daily morning briefing banner: Stella computes campaign health on
+    load (once per day) and fires a live LLM call to write a natural-
+    language briefing in her voice. Appears as a dismissable banner above
+    widgets and as the opening popup chat message for the day.
+
+  VIRTUAL OFFICE
+  - Six agent desks: Billing, Stella, Trafficking, Reporting, Handoff,
+    Tagging. Toggle between pixel-art canvas view and flat card view.
+  - Clicking a desk opens a side chat panel. Stella's desk shows live
+    active campaign count and connects to her full AI capabilities.
+    Other agents show their domain and roadmap status.
+
+  SETTINGS
+  - Dark mode / light mode toggle (persisted).
+  - Six accent color swatches.
+  - Default campaign filter.
+  - Archive settings: ended campaigns and completed to-dos (Never / 7 /
+    14 / 30 days).
+  - Widget show/hide toggles (synced with dashboard close buttons).
+  - Restart Tour button for demos and new user walkthroughs.
+
+  ONBOARDING
+  - First-time flow: name capture modal (Stella asks what to call you),
+    Stella intro screen, guided tour offer.
+  - 6-step guided tour with spotlight + tooltip: Home, Campaigns, Virtual
+    Office, Resources, Settings, Ask Stella button. Navigates to each
+    view live. Progress dots, Back/Next/Skip controls.
+  - Nickname stored in localStorage; used in all greetings and briefings.
+  - Tour restartable from Settings > Onboarding for demos.
+
+  DEPLOYMENT
+  - Runs entirely within Google Workspace — no external servers, no IT
+    dependency for the core app.
+  - LiteLLM calls made browser-side so the internal SXM endpoint is
+    reachable without a proxy.
+  - AM identity resolved automatically from Google login — no separate
+    sign-in required.
+
+
+── WHAT'S NEXT (DEFERRED) ──────────────────────────────────────────────
+
+Items below are deferred pending additional resources, API access, or
+subagent completion. Numbers are stable — use them to reference items
+in conversations with leadership or engineering.
+
+
+── DATA MODEL ──────────────────────────────────────────────────────────────
+
+1. STRUCTURED FLIGHT DATA — PHASE 2 (per-flight enrichment)
+   Current: Flights stored as JSON array of start/end date pairs (shipped).
+            Add-flight UI in the campaign modal.
+   Future:  Each flight record also stores: ad format/product, impression
+            goal, delivered impressions, pacing %. Campaign detail view
+            shows a per-flight breakdown table with individual pacing bars.
+            Flight-level notes and creative associations.
+   Needs:   UI expansion in the flight picker modal section. No backend
+            schema change required — fields extend the existing JSON array
+            (e.g. [{"start":"…","end":"…","format":"Audio","goal":500000}]).
+
+2. IO APPROVAL STATUS PER APPROVER
+   Current: Not tracked (deferred until IO Approval subagent is built).
+   Future:  Four status fields per campaign — Legal, QC, C2, EOA —
+            each showing Pending / Approved / Rejected with timestamp.
+            Detail view shows a visual approval checklist.
+   Needs:   IO Approval subagent + either manual input or Salesforce API.
+
+3. BILLING STATUS
+   Current: Not tracked (deferred until Billing subagent matures).
+   Future:  Per-campaign billing state — Pending / Invoiced / Paid / Issue.
+            Links to specific invoices in Salesforce.
+   Needs:   Billing subagent + Salesforce API or manual input.
+
+4. MAKE GOOD TRACKING
+   Current: Not tracked.
+   Future:  Flag per campaign — None / Required / In Progress / Resolved.
+            Linked to the credit/rebill case in Salesforce.
+   Needs:   Billing subagent.
+
+5. 3P CREDENTIALS STATUS
+   Current: Not tracked.
+   Future:  Per-campaign field — Set / Pending / N/A — with the vendor
+            name (DFA, Flashtalking, Innovid, etc.).
+   Needs:   Post-launch subagent or manual input.
+
+
+── INTEGRATIONS ────────────────────────────────────────────────────────────
+
+6. LIVE PACING DATA (Slingshot / Ads Manager API)
+   Current: Pacing % entered manually by AM.
+   Future:  Auto-pull pacing from Slingshot or Ads Manager on page load.
+            Dashboard refreshes pacing in real time without AM input.
+   Needs:   API access to Slingshot (slingshot.savagebeast.com) or
+            Ads Manager. Likely needs IT/eng to expose an internal endpoint.
+
+7. SALESFORCE INTEGRATION
+   Current: AM pastes SF opportunity and IO case URLs manually.
+   Future:  Salesforce Connected App — pull campaign status, IO approval
+            state, case list, and invoice data directly. Could also
+            write back (e.g., open a billing case from Stella).
+   Needs:   Salesforce Connected App setup, OAuth, SF API access.
+
+8. OUTLOOK EMAIL PARSING (Case & Ticket Notifications)
+   Current: AM can paste email text into Stella chat for manual parsing.
+   Future (medium term): Outlook forwarding rule → Gmail bridge →
+            GAS reads Gmail via GmailApp, parses notification emails
+            (new IO approval cases, billing cases, JIRA tickets assigned),
+            and surfaces them as dashboard alerts.
+   Future (long term): Microsoft Graph API or Power Automate webhook
+            that POSTs parsed email data directly to Stella's doPost()
+            endpoint in real time.
+   Needs (medium): Ability to set Outlook forwarding rules to a Gmail
+            address (no IT required if AM has Outlook access).
+   Needs (long): Azure AD app registration, IT involvement, Power Automate
+            license.
+
+9. JIRA / THEOREM INTEGRATION
+   Current: AM pastes ticket IDs/URLs; links are auto-constructed.
+   Future:  JIRA API — pull ticket status, assignee, and last update
+            directly. Stella can tell the AM "your THRM-379498 was updated
+            yesterday — status changed to In Progress."
+   Needs:   JIRA API token + access to jira.savagebeast.com from GAS
+            (may require a proxy or server-side fetch workaround similar
+            to the current LiteLLM pattern).
+
+10. OMS / SLINGSHOT ORDER SYNC
+    Current: AM enters order IDs manually; links auto-construct.
+    Future:  Pull order details (line items, CPMs, impressions, billing
+             source, OMS status) directly into the campaign detail view.
+    Needs:   API access to pandora-ads.savagebeast.com and
+             slingshot.savagebeast.com.
+
+
+── SUBAGENTS TO BUILD ──────────────────────────────────────────────────────
+
+11. TRAFFICKING SUBAGENT
+    Domain: JIRA (Theorem), traffic ticket workflow.
+    KB:     How to submit trafficking requests, DIF status, ad specs,
+            creative requirements, ISCI codes.
+    Trigger keywords: jira, theorem, traffic, trafficked, DIF, creative.
+
+12. REPORTING SUBAGENT
+    Domain: 3P delivery reports, wrap reports, post-campaign analysis.
+    KB:     3P reporting format requirements, how to pull DFA/DCM reports,
+            mapping PCLIDs, submitting reports via billing case.
+    Trigger keywords: report, wrap report, delivery report, 3P report,
+                      post-campaign.
+
+13. HANDOFF / TRANSITION SUBAGENT
+    Domain: Account transitions, PTO coverage, AM-to-AM handoffs.
+    KB:     Transition checklist, how to add new AM to billing cases,
+            OOO/coverage best practices, notifying biller.
+    Trigger keywords: handoff, transition, coverage, PTO, OOO, new AM.
+
+14. TAGGING / PIXEL SUBAGENT
+    Domain: 3P tag implementation, pixel setup, brand safety/viewability.
+    KB:     Tag types, how to submit tagging requests, verification steps,
+            common tag issues and fixes.
+    Trigger keywords: tag, pixel, 3P tag, brand safety, viewability,
+                      flashtalking, innovid.
+
+
+── ARCHITECTURE UPGRADES ───────────────────────────────────────────────────
+
+15. TRUE MULTI-AGENT TOOL USE (Phase 2)
+    Current: Dynamic KB routing — keyword matching selects relevant
+             knowledge base sections injected into a single system prompt.
+             All "agents" run in one LLM call.
+    Future:  Stella uses Claude's tool_use API to delegate tasks to
+             subagents as actual function calls. Each subagent is a
+             separate LLM call with its own system prompt and KB.
+             Stella receives results and synthesizes a final response.
+    Needs:   Multiple sequential LLM calls per user message (latency
+             tradeoff). Best implemented when a proper backend server
+             replaces the current browser-fetch architecture.
+
+16. BACKEND SERVER (Replace Browser-Fetch Pattern)
+    Current: LiteLLM calls made from the user's browser because
+             litellm.siriusxm.com is an internal hostname that Google's
+             servers can't resolve.
+    Future:  A lightweight internal server (Node.js, Python Flask, etc.)
+             acts as a proxy — GAS calls the internal server, server
+             calls LiteLLM. Enables server-side streaming, multi-agent
+             chaining, and removes the need to inject API keys into HTML.
+    Needs:   IT/eng to stand up a small internal service.
+
+17. USER SETTINGS & PREFERENCES (partially shipped)
+    Shipped: Dark/light mode, accent color, default campaign filter,
+             archive setting, widget show/hide toggles, drag-and-drop
+             widget order, per-link visibility in Quick Links widget.
+             All preferences persisted to localStorage.
+    Remaining: Preferred Slingshot view (pacing vs. delivery),
+             notification preferences, Stella's verbosity level.
+
+18. CAMPAIGN IMPORT FROM ADS MANAGER / OMS
+    Current: Campaigns entered manually one at a time.
+    Future:  Bulk import — AM exports a CSV from Ads Manager or OMS,
+             uploads it to Stella, and campaigns are auto-populated.
+    Needs:   CSV parsing logic + column mapping UI.
+
+19. ADMIN-CONTROLLED RESOURCE MANAGEMENT
+    Current: Any AM can add custom resources to their own Resources page.
+             Resources are stored in localStorage (per-device, per-browser).
+    Future:  Admin role (e.g., CS team lead) can add shared resources that
+             appear for all AMs. AMs can still add personal resources on top.
+             Admin panel to add/edit/remove shared links, grouped by category.
+    Needs:   User roles in Stella (admin flag in DB or Script Properties).
+             Shared resource list stored in the Google Sheet (not localStorage).
+             Admin UI gated behind role check on load.
+
+
+── AM-BUILT GPT INTEGRATIONS ────────────────────────────────────────────
+
+The following agents were built by other AMs as standalone GPTs. The plan
+is to port their knowledge base content into Stella (Option B) so AMs
+never need to leave the tool. Each requires getting the source KB/system
+prompt from the original AM, creating a .gs KB file, and wiring it into
+STELLA_KB_ROUTER in Stella.gs. Trigger keyword stubs are already
+commented out in the router, ready to uncomment.
+
+20. TRAFFICKING SUBAGENT — PORT FROM EXISTING GPT
+    Current: Standalone ChatGPT-based trafficking GPT built by another AM.
+    Plan:    Get system prompt / KB content from original AM.
+             Create TrafficKB.gs following the BillingKB.gs pattern.
+             Uncomment trafficking keywords in STELLA_KB_ROUTER:
+               "jira", "theorem", "traffic", "trafficked", "DIF", "creative"
+             Wire _getRelevantKBContent() to call getTrafficKB() when
+             domain = "trafficking". Virtual Office desk already exists.
+    Needs:   KB content handoff from original AM.
+
+21. CAMPAIGN MONITORING SUBAGENT — PORT FROM EXISTING GPT
+    Current: Standalone GPT focused on campaign delivery monitoring
+             being built by another AM.
+    Plan:    Get KB / system prompt from original AM.
+             Create MonitoringKB.gs with delivery monitoring workflows —
+             pacing thresholds, under-delivery flags, escalation paths,
+             how to read delivery reports and act on at-risk campaigns.
+             Register new keywords in STELLA_KB_ROUTER:
+               "monitor", "delivery", "at-risk", "under-delivery", "alert"
+             Wire into _getRelevantKBContent() as domain "monitoring".
+    Needs:   KB content handoff from original AM.
+
+22. INCREMENTAL UPSELL ASSISTANT — PORT FROM EXISTING GPT
+    Current: Standalone GPT for incremental upsell conversations
+             being built by another AM.
+    Plan:    Get KB / system prompt from original AM.
+             Create UpsellKB.gs covering upsell talking points, product
+             recommendations by advertiser category, pricing guidance,
+             and how to position incremental spend mid-campaign.
+             Register new keywords in STELLA_KB_ROUTER:
+               "upsell", "incremental", "upgrade", "add-on", "expand"
+             Wire into _getRelevantKBContent() as domain "upsell".
+    Needs:   KB content handoff from original AM.
+
+
+── AGENTIC VISION ──────────────────────────────────────────────────────────
+
+The features below represent the next tier of Stella's autonomy — moving
+from a reactive assistant (you ask, she answers) to a proactive partner
+(she monitors, alerts, and acts on your behalf without being prompted).
+
+23. TRUE AGENTIC MORNING BRIEFING
+    Current: computeDailyBriefing() fires once on page load (client-side).
+             It calls the LLM to write a natural-language summary in Stella's
+             voice. The result appears as a dashboard banner and pre-populates
+             the popup chat. This is "agentic-adjacent" — real LLM reasoning,
+             but still triggered by the user loading the app.
+    Vision:  A server-side scheduled trigger (GAS time-based trigger or cron
+             on a lightweight backend) runs Stella's briefing check each
+             morning independently — no user action required. Output is:
+             (a) written to the AM's dashboard so it's waiting when they
+             arrive, (b) optionally delivered as an Outlook/email notification,
+             and (c) logged for the team lead as a daily campaign health digest.
+    Why it matters: This is the difference between a smart assistant and an
+             autonomous operating partner. Stella stops waiting to be asked
+             and starts proactively managing the workload.
+    Needs:   Roadmap Item 16 (backend server) for scheduling outside GAS
+             time limits, OR a GAS time-based trigger calling a doPost()
+             endpoint that pre-builds briefings and caches them in the Sheet.
+             Outlook integration (Item 8) for push delivery.
+
+24. PROACTIVE CAMPAIGN ALERTS
+    Current: Campaign Activity widget shows rule-based alerts on load.
+    Vision:  Stella monitors campaigns continuously (via scheduled server job)
+             and pushes alerts when a threshold is crossed mid-day — e.g.,
+             "Pacing on Campaign X just dropped below 70% — want me to draft
+             a client update?" Delivered via email/Slack/dashboard badge
+             without the AM needing to open the tool.
+    Needs:   Backend server (Item 16) + Slingshot API (Item 6) for real-time
+             pacing data. Notification delivery requires email (Item 8) or
+             Slack webhook.
+
+25. STELLA-INITIATED ACTIONS (Tool Use)
+    Current: Stella answers questions and surfaces information. All actions
+             (opening tickets, updating campaigns, drafting emails) require
+             the AM to act on Stella's suggestions.
+    Vision:  With Claude's tool_use API, Stella can take actions on behalf
+             of the AM: update campaign pacing in the Sheet, open a billing
+             case in Salesforce, assign a JIRA ticket, or send a drafted
+             email — all with AM confirmation before execution.
+    Needs:   True multi-agent tool use (Item 15) + backend server (Item 16)
+             + individual integration APIs (Items 6–10).
+
+26. OUTLOOK CALENDAR — MSAL.JS MULTI-AM INTEGRATION (Option 2)
+    Current: Item 8 (Outlook Email Parsing) and a Claude Code bridge (Item 14a,
+             Phase 14) allow the AM running Claude Code to sync their own
+             calendar to the Meetings widget. This is a single-user, manual-
+             trigger flow.
+    Vision:  Embed MSAL.js (Microsoft Authentication Library) directly into
+             Stella's web app. Each AM signs in with their Microsoft account
+             via OAuth once; Stella stores the refresh token per AM (or uses
+             silent token acquisition). On every load, Stella fetches the AM's
+             next 7 days of events from Microsoft Graph in-browser —
+             no Claude Code needed, works for all AMs simultaneously.
+    Architecture:
+             - Add MSAL.js (CDN) to Index.html.
+             - Register a "Stella Calendar" Azure AD app (single-tenant,
+               siriusxm.com) with Calendars.Read delegated permission.
+             - On Meetings widget load: check for a cached MSAL account;
+               if present, call Graph /me/calendarView; if not, show
+               "Sign in with Microsoft" button that triggers acquireTokenPopup.
+             - Token cached in MSAL's browser sessionStorage/localStorage;
+               refresh handled automatically.
+             - No server needed — all Graph calls are browser-side, same
+               pattern as current LiteLLM calls.
+    Comparison with current bridge (Phase 14):
+             Phase 14 (shipped): Claude Code skill + doPost() endpoint.
+               Works today; requires Claude Code + plugin; one AM at a time.
+             Item 26 (this): Zero extra tools; all AMs; always-on.
+    Needs:   Azure AD app registration in SiriusXM tenant — requires IT or
+             an admin with app registration permissions in Entra ID.
+             Microsoft Graph Calendars.Read scope approved for the app.
+             No backend changes — Index.html + MSAL CDN script only.
+
+
+===========================================================================
+To revisit any deferred item, search by number (e.g. "item 6") or keyword.
+Add new deferred items at the bottom with the next sequential number.
+Add completed work to the "WHAT'S BEEN BUILT" section at the top.
