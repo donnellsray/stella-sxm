@@ -6,6 +6,37 @@ Deployed as a Google Apps Script web app — no installation required, accessibl
 
 ---
 
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="assets/screenshots/01-dashboard.png" alt="Dashboard with morning briefing and Stella AI chat" /></td>
+    <td><img src="assets/screenshots/02-campaigns.png" alt="My Campaigns — card grid with status and pacing" /></td>
+  </tr>
+  <tr>
+    <td><em>Dashboard — morning briefing, campaign calendar Gantt, activity feed, and Stella AI chat</em></td>
+    <td><em>My Campaigns — card grid with color-coded status, pacing bars, and flight warnings</em></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/03-virtual-office.png" alt="Virtual Office pixel art with Stella chat open" /></td>
+    <td><img src="assets/screenshots/04-resources.png" alt="Resources tab with quick links and custom tools" /></td>
+  </tr>
+  <tr>
+    <td><em>Virtual Office — pixel art HTML5 canvas with per-agent chat panels</em></td>
+    <td><em>Resources — browseable hub for quick links, CS tools, and custom AM resources</em></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/05-onboarding.png" alt="Onboarding flow" /></td>
+    <td><img src="assets/screenshots/06-settings.png" alt="Settings with widget toggles" /></td>
+  </tr>
+  <tr>
+    <td><em>Onboarding — name capture, role selection, and guided spotlight tour</em></td>
+    <td><em>Settings — dark mode, accent color, default filter, and per-widget visibility toggles</em></td>
+  </tr>
+</table>
+
+---
+
 ## What It Does
 
 **Campaign Management**
