@@ -68,7 +68,7 @@ No external servers. No npm. No build step. The entire app ships as one HTML fil
 ```
 Stella.gs          Orchestrator — doGet(), system prompt builder, KB router
 StellaDB.gs        Data layer — Google Sheets read/write, schema migration
-BillingKB.gs       Billing workflow knowledge base (keyword-matched injection)
+BillingKB.gs       Billing workflow knowledge base (omitted — see note below)
 Index.html         Single-file SPA — all CSS, HTML, and JS
 ```
 
@@ -86,7 +86,7 @@ GAS serves the HTML with API credentials injected as template variables. LiteLLM
 ## Setup (for your own deployment)
 
 1. Create a new Google Apps Script project
-2. Paste `Stella.gs`, `StellaDB.gs`, `BillingKB.gs`, and `Index.html` into the editor
+2. Paste `Stella.gs`, `StellaDB.gs`, and `Index.html` into the editor (plus your own `BillingKB.gs` — see note below)
 3. Set Script Properties:
    ```
    LITELLM_API_KEY    → your API key
@@ -115,6 +115,9 @@ Full details in `ROADMAP.txt`.
 
 ## Notes for Portfolio Reviewers
 
-- Internal tool URLs and endpoint hostnames have been replaced with placeholders in this public version
-- No credentials are stored in code — all secrets live in GAS Script Properties
-- The Billing KB (`BillingKB.gs`) contains proprietary workflow content and has been omitted from this repo
+- No credentials are stored in code — all secrets live in GAS Script Properties, injected at runtime as template variables
+- The following files have been omitted from this repo because they contain proprietary internal content:
+  - `BillingKB.gs` — SiriusXM's internal billing workflow knowledge base (IO approval, OMS setup, billing close, escalation paths, etc.)
+  - `STELLA_OVERVIEW.txt` — internal project summary referencing SXM infrastructure
+  - `STELLA_PRESENTATION.html` — internal leadership deck
+- The KB routing architecture (`STELLA_KB_ROUTER`, `_getRelevantKBContent`) is fully present in `Stella.gs` — `BillingKB.gs` is a drop-in content file that follows the same pattern and can be replaced with any domain knowledge base
