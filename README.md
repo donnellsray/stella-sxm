@@ -1,6 +1,6 @@
 # Stella AI — Client Services Operating Partner
 
-An AI-powered web app built for an advertising sales team to manage campaigns, get instant answers to billing and workflow questions, and reduce time spent on repetitive operational tasks.
+An AI-powered web app built for Account Managers at SiriusXM to manage campaigns, get instant answers to billing and workflow questions, and reduce time spent on repetitive operational tasks.
 
 Deployed as a Google Apps Script web app — no installation required, accessible to any team member through their existing Google account.
 
